@@ -1,0 +1,138 @@
+import React from 'react';
+import {Chat} from "./Chat/Chat";
+import {Button, Flex, Space} from "antd";
+import {ChooseWordDialog} from "./ChooseWordDialog";
+import {DrawCanvas} from "./Drawer/DrawCanvas";
+import {StateManager} from "../../Classes/StateManager";
+import {MessageData} from "./Chat/ChatArea";
+import {ServerEvent} from "../../Classes/Events/ServerEvent";
+import {UserMessageEvent} from "../../Classes/Events/UserMessageEvent";
+import {InfoMessageEvent} from "../../Classes/Events/InfoMessageEvent";
+import {NewDrawerEvent} from "../../Classes/Events/NewDrawerEvent";
+import {DrawEvent, Point} from "../../Classes/Events/DrawEvent";
+import {ChooseWordEvent} from "../../Classes/Events/ChooseWordEvent";
+import {useNavigate} from "react-router-dom";
+import {PagesEnum} from "../../index";
+
+class RoomPage extends React.Component<{}, {
+    Messages: MessageData[],
+    wordsToChoose: string[] | null,
+    word: string | null,
+    isDrawer: boolean
+}> {
+
+    private _canvas: React.RefObject<DrawCanvas> = React.createRef();
+    private _chooseWordDialog: React.RefObject<ChooseWordDialog> = React.createRef();
+    private _chat: React.RefObject<Chat> = React.createRef();
+
+    constructor(props: any) {
+        super(props);
+        this.state = {Messages: [], wordsToChoose: [], word: null, isDrawer: false};
+        StateManager.getRoom()?.subscribeEvents((event => {
+            this.eventHandler(event)
+        }));
+    }
+
+    private eventHandler(event: ServerEvent) {
+        if (event instanceof UserMessageEvent) {
+
+            this.setState({
+                Messages: [...this.state.Messages, new MessageData(event.userId, event.userId, event.text)],
+                wordsToChoose: this.state.wordsToChoose,
+                word: this.state.word,
+                isDrawer: this.state.isDrawer
+            });
+
+        } else if (event instanceof InfoMessageEvent) {
+
+            this.setState({
+                Messages: [...this.state.Messages, new MessageData("Info", "Info", event.text, false)],
+                wordsToChoose: this.state.wordsToChoose,
+                word: this.state.word,
+                isDrawer: this.state.isDrawer
+            });
+
+        } else if (event instanceof NewDrawerEvent) {
+
+            let isDrawer = event.userId === StateManager.getRoom()?.userId;
+            this.setState({
+                Messages: [...this.state.Messages, new MessageData("New drawer", "New drawer", event.userId, false)],
+                wordsToChoose: this.state.wordsToChoose,
+                word: this.state.word,
+                isDrawer: isDrawer
+            });
+            this._canvas.current?.clear();
+
+        } else if (event instanceof DrawEvent) {
+
+            this._canvas.current?.drawLine(event.startPoint, event.finishPoint);
+
+        } else if (event instanceof ChooseWordEvent) {
+
+            this.setState({
+                Messages: this.state.Messages,
+                wordsToChoose: event.words,
+                word: this.state.word,
+                isDrawer: this.state.isDrawer
+            });
+
+        }
+    }
+
+    private setWord(index: number, word: string) {
+        console.assert(this.state.isDrawer)
+
+        this.setState({wordsToChoose: [], word: word, isDrawer: this.state.isDrawer})
+        StateManager.getRoom()?.wordChosen(index)
+        // console.log("word: " + word)
+    }
+
+    private clientNewMessage(message: string): boolean {
+        let room = StateManager.getRoom();
+        if (room === null) {
+            console.assert("clientNewMessage: room === null")
+            return false;
+        }
+
+        return room.sendMessage(message);
+    }
+
+    private clientNewDraw(startPoint: Point, finishPoint: Point) {
+        StateManager.getRoom()?.drawLine(startPoint, finishPoint);
+    }
+
+    render() {
+        const navigate = useNavigate();
+        return (
+            <Flex>
+                <Button onClick={e => {
+                    let room = StateManager.getRoom();
+                    if (room === null) {
+                        console.assert("onClickLeave: room === null")
+                        return;
+                    }
+                    room.leave();
+                    navigate(PagesEnum.ROOM_LIST);
+                }}>Leave</Button>
+                <Space>
+                    <ChooseWordDialog ref={this._chooseWordDialog}
+                                      words={this.state.wordsToChoose}
+                                      onClose={(index: number, word: string) => this.setWord(index, word)}
+                                      open={this.state.wordsToChoose !== null}/>
+                    <DrawCanvas ref={this._canvas}
+                                canUserPaint={this.state.isDrawer && this.state.word !== null}
+                                drawSubscriber={(startPoint: Point, finishPoint: Point) =>
+                                    this.clientNewDraw(startPoint, finishPoint)}/>
+                    <Chat ref={this._chat}
+                          canType={!this.state.isDrawer}
+                          messages={this.state.Messages}
+                          sendNewMessage={(message: string) => this.clientNewMessage(message)}
+                    />
+                </Space>
+            </Flex>
+
+        );
+    }
+}
+
+export default RoomPage;
