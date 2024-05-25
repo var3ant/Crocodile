@@ -1,10 +1,6 @@
 import React from 'react';
 import './App.css';
-import {LoginPage} from "./Components/Login/LoginPage";
 import RoomPage from "./Components/Room/RoomPage";
-import {RoomModel} from "./Classes/RoomModel";
-import {ServerRequests} from "./Classes/ServerRequests";
-import {StateManager} from "./Classes/StateManager";
 
 class App extends React.Component<{}, { isGameFound: boolean }> {
     constructor(props: any) {

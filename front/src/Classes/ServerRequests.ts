@@ -1,17 +1,31 @@
+import {StateManager} from "./StateManager";
+import {AxiosService} from "./Http/AxiosService";
+
 export class ServerRequests {
-    public static async login(text: string): Promise<string | null> {
-        const requestOptions = {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: ""
-        };
-        const response = await fetch('http://localhost:8080/auth/signup/' + text, requestOptions);
-        if (response.ok) {
-            return await response.text();
-        } else {
-            alert("status: " + response.status)
-            return null;
+    public static async login(name: string, password: string): Promise<number | null> {
+        AxiosService.setAuthToken(null)
+
+        let result: { data: { token: string, id: number } } = await StateManager.axios.request('POST', '/auth/login', {
+            login: name,
+            password: password
+        })
+        //TODO: кейс с ошибкой
+        console.log(result)
+        if (result.data.token !== null && result.data.token !== undefined) {
+            AxiosService.setAuthToken(result.data.token)
         }
+        return result.data.id;
+    }
+
+    public static async register(name: string, password: string): Promise<number | null> {
+        AxiosService.setAuthToken(null)
+
+        let result: { data: { id: number } } = await StateManager.axios.request('POST', '/auth/register', {
+            login: name,
+            password: password
+        })
+        //TODO: кейс с ошибкой
+        return result.data.id;
     }
 
     // public static async createRoom(text: string): Promise<string> {

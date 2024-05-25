@@ -5,14 +5,7 @@ import {CreateRoomForm} from "./CreateRoomForm";
 import {useNavigate} from "react-router-dom";
 
 export function BrowserPage() {
-    const navigate = useNavigate();
-
-    // const onRoomChoose = (roomView: RoomView) => {
-    //
-    // }
-
     return (
-        <>
             <Row justify="center" align="middle">
                 <Col flex={3}>
                     <RoomBrowser/>
@@ -21,6 +14,5 @@ export function BrowserPage() {
                     <CreateRoomForm/>
                 </Col>
             </Row>
-        </>
     );
 }

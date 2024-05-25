@@ -5,12 +5,12 @@ import {Point} from "./Events/DrawEvent";
 
 class RoomModel {
     public Messages: MessageData[];
-    public readonly userId: string;
+    public readonly userId: number;
 
     private _roomConnection: RoomConnection
     private _eventSubscriber: ((event: ServerEvent) => void) | null = null;
 
-    constructor(userId: string, roomId: string) {
+    constructor(userId: number, roomId: string) {
         this.Messages = [];
         this._roomConnection = new RoomConnection(this, userId, roomId);
         this._roomConnection.connect()

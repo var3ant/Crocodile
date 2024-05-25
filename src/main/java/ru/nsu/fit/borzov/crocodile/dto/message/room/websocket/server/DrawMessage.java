@@ -1,10 +1,10 @@
-package ru.nsu.fit.borzov.crocodile.dto.message.room.server;
+package ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.server;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.client.DrawRequest;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.DrawRequest;
 import lombok.experimental.Delegate;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.client.Point;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.Point;
 
 @Getter
 public class DrawMessage extends ServerMessage {

@@ -5,11 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.client.ChatRequest;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.client.ChooseWordRequest;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.client.DrawRequest;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.ChatRequest;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.ChooseWordRequest;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.DrawRequest;
+import ru.nsu.fit.borzov.crocodile.model.User;
 import ru.nsu.fit.borzov.crocodile.service.RoomService;
 
 import java.security.Principal;
@@ -21,7 +23,7 @@ public class WebSocketController {
 
     @MessageMapping("/chat/{roomId}")
     public void chat(@DestinationVariable long roomId, ChatRequest message, Principal principal) {
-        var userId = Long.parseLong(principal.getName());
+        var userId = getUserId(principal);
         roomService.sendChatMessage(message, userId, roomId);
         var logger = LoggerFactory.getLogger(WebSocketController.class);
         logger.info(message.getMessage());
@@ -29,13 +31,13 @@ public class WebSocketController {
 
     @MessageMapping("/choose_word/{roomId}")
     public void chooseWord(@DestinationVariable long roomId, ChooseWordRequest chooseWordRequest, Principal principal) {
-        var userId = Long.parseLong(principal.getName());
+        var userId = getUserId(principal);
         roomService.chooseWord(userId, roomId, Integer.parseInt(chooseWordRequest.getIndex()));
     }
 
     @MessageMapping("/draw/{roomId}")
     public void draw(@DestinationVariable long roomId, DrawRequest draw, Principal principal) {
-        var userId = Long.parseLong(principal.getName());
+        var userId = getUserId(principal);
         roomService.sendDrawMessage(draw, userId, roomId);
     }
 
@@ -43,7 +45,7 @@ public class WebSocketController {
     @MessageMapping("/join/{roomId}")
     public void joinRoom(@DestinationVariable String roomId, Principal principal) throws Exception {
         try {
-            var userId = Long.parseLong(principal.getName());
+            var userId = getUserId(principal);
             var roomIdInt = Long.parseLong(roomId);
             roomService.join(userId, roomIdInt);
         } catch (NumberFormatException e) {
@@ -54,7 +56,7 @@ public class WebSocketController {
 
     @MessageMapping("/disconnect")
     public void disconnectRoom(Principal principal) {
-        var userId = Long.parseLong(principal.getName());
+        var userId = getUserId(principal);
 
         roomService.disconnect(userId);
     }
@@ -65,8 +67,15 @@ public class WebSocketController {
         if (user == null) {
             return;//TODO:
         }
-        var userId = Long.parseLong(user.getName());//TODO:exception
+        var userId = getUserId(user);//TODO:exception
 
         roomService.disconnect(userId);
+    }
+
+
+    private Long getUserId(Principal principal) {
+        var authenticationToken = (UsernamePasswordAuthenticationToken) principal;
+        var user = (User) authenticationToken.getPrincipal();
+        return user.getId();
     }
 }

@@ -32,16 +32,16 @@ export function RoomPage() {
     const eventHandler = (event: ServerEvent) => {
         if (event instanceof UserMessageEvent) {
 
-            setMessages([...messages, new MessageData(event.userId, event.userId, event.text)])
+            setMessages([...messages, new MessageData(event.userId, event.userId.toString(), event.text)])
 
         } else if (event instanceof InfoMessageEvent) {
 
-            setMessages([...messages, new MessageData("Info", "Info", event.text, false)])
+            setMessages([...messages, new MessageData(-1, "Info", event.text, false)])
 
         } else if (event instanceof NewDrawerEvent) {
 
             let isDrawer = event.userId === StateManager.getRoom()?.userId;
-            setMessages([...messages, new MessageData("New drawer", "New drawer", event.userId, false)])
+            setMessages([...messages, new MessageData(-1, "New drawer", event.userId.toString(), false)])
             setIsDrawer(isDrawer)
             _canvas.current?.clear();
 
@@ -98,7 +98,7 @@ export function RoomPage() {
                 <ChooseWordDialog ref={_chooseWordDialog}
                                   words={wordsToChoose}
                                   onClose={(index: number, word: string) => chooseWord(index, word)}
-                                  open={wordsToChoose !== null}/>
+                />
                 <DrawCanvas ref={_canvas}
                             canUserPaint={isDrawer && word !== null}
                             drawSubscriber={(startPoint: Point, finishPoint: Point) =>

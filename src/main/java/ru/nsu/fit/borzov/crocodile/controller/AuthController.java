@@ -3,9 +3,12 @@ package ru.nsu.fit.borzov.crocodile.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.LoginResponse;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.LoginRequest;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.RegisterRequest;
 import ru.nsu.fit.borzov.crocodile.exception.AlreadyExistException;
+import ru.nsu.fit.borzov.crocodile.exception.InvalidUserAuthDataException;
 import ru.nsu.fit.borzov.crocodile.service.UserService;
 
 import java.util.List;
@@ -23,9 +26,14 @@ public class AuthController {
         userService.clearDb();
     }
 
-    @PostMapping("/signup/{name}")
-    public long signUp(@PathVariable String name) throws AlreadyExistException {
-        return userService.createNew(name);
+    @PostMapping("/register")
+    public long register(@RequestBody RegisterRequest registerRequest) throws AlreadyExistException {
+        return userService.register(registerRequest);
+    }
+
+    @PostMapping("/login")
+    public LoginResponse login(@RequestBody LoginRequest loginRequest) throws InvalidUserAuthDataException {
+        return userService.login(loginRequest);
     }
 
     @ExceptionHandler({AlreadyExistException.class})

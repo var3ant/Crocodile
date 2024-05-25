@@ -6,21 +6,60 @@ import {createBrowserRouter, RouterProvider} from 'react-router-dom';
 import RoomPage from "./Components/Room/RoomPage";
 import {BrowserPage} from "./Components/Browser/BrowserPage";
 import {LoginPage} from "./Components/Login/LoginPage";
+import {RegisterPage} from "./Components/Login/RegisterPage";
+import {ProtectedRoute} from "./Classes/Route/ProtectedRoute";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 
-export const PagesEnum  = {
-    LOGIN  : '/login',
-    ROOM     : '/room/',
-    ROOM_LIST : '/room_list'
+export const PagesEnum = {
+    Register: '/register',
+    LOGIN: '/login',
+    ROOM: '/room/',
+    ROOM_LIST: '/room_list'
 };
+
+// const router = createBrowserRouter([
+//     {
+//         path: "/",
+//         element: <RegisterPage/>
+//     },
+//     {
+//         path: PagesEnum.Register,
+//         element: <RegisterPage/>
+//     },
+//     {
+//         path: PagesEnum.LOGIN,
+//         element: (
+//             <ProtectedRoute>
+//                 <LoginPage/>
+//             </ProtectedRoute>)
+//     },
+//     {
+//         path: PagesEnum.ROOM + ":roomId",
+//         element: (
+//             <ProtectedRoute>
+//                 <RoomPage/>
+//             </ProtectedRoute>)
+//     },
+//     {
+//         path: PagesEnum.ROOM_LIST,
+//         element: (
+//             <ProtectedRoute>
+//                 <BrowserPage/>
+//             </ProtectedRoute>)
+//     },
+// ]);
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <LoginPage/>
+        element: <RegisterPage/>
+    },
+    {
+        path: PagesEnum.Register,
+        element: <RegisterPage/>
     },
     {
         path: PagesEnum.LOGIN,

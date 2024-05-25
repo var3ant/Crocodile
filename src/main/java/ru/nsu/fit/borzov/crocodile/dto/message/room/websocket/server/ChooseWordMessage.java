@@ -1,4 +1,4 @@
-package ru.nsu.fit.borzov.crocodile.dto.message.room.server;
+package ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.server;
 
 
 import lombok.Getter;

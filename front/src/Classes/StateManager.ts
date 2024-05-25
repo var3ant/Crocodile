@@ -1,8 +1,10 @@
 import {RoomModel} from "./RoomModel";
+import {AxiosService} from "./Http/AxiosService";
 
 export class StateManager {
     private static room: RoomModel | null;
-    public static userId: string | null;
+    public static userId: number | null;
+    public static axios: AxiosService = new AxiosService();
 
     static setRoom(roomId: number) {
         console.log("set roomid:" + roomId)

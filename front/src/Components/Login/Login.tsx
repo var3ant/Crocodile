@@ -1,23 +1,22 @@
-import React from "react";
+import React, {useState} from "react";
 import {Button, Input, Space} from "antd";
 
-class Login extends React.Component<{ onClick: (text: string) => void }, { text: string }> {
-    constructor(props: { onClick: (text: string) => boolean }) {
-        super(props);
-        this.state = {text: ""};
-    }
+export type onClickFunc = (login: string, password: string) => void;
 
-    render() {
-        return (
-            <Space.Compact style={{width: '100%'}}>
-                <Input placeholder="Enter name" value={this.state.text}
-                       onChange={text => this.setState({text: text.target.value})}/>
-                <Button type="primary" onClick={() => {
-                    this.props.onClick(this.state.text)
-                }}>Send</Button>
-            </Space.Compact>
-        );
-    }
+
+export function Login(props: Readonly<{onClick: onClickFunc}>) {
+    let [login, setLogin] = useState("");
+    let [password, setPassword] = useState("");
+
+    return (
+        <Space.Compact style={{width: '100%'}}>
+            <Input placeholder="Enter name" value={login}
+                   onChange={text => setLogin(text.target.value)}/>
+            <Input placeholder="Enter password" value={password}
+                   onChange={text => setPassword(text.target.value)}/>
+            <Button type="primary" onClick={() => {
+                props.onClick(login, password)
+            }}>Send</Button>
+        </Space.Compact>
+    );
 }
-
-export {Login};

@@ -1,39 +1,24 @@
 import {RoomView} from "./Response/RoomView";
 import {CreateRoomData} from "../../Components/Browser/CreateRoomForm";
+import {StateManager} from "../StateManager";
 
 export class HttpRoomApi {
-    private static readonly path: string = 'http://localhost:8080/room'
+    private static readonly path: string = '/room'
 
     public static async getRooms(): Promise<RoomView[]> {
-        const requestOptions = {
-            method: 'GET',
-            headers: {'Content-Type': 'application/json'},
-        };
-        const response = await fetch(this.path, requestOptions);
-        return JSON.parse(await response.text());//TODO: чё тут с типами. Что если придут не те типы.
+        const response = await StateManager.axios.request('GET', HttpRoomApi.path, null);
+        return response.data;
     }
 
     public static async getRoom(id: string): Promise<RoomView> {
-        const requestOptions = {
-            method: 'GET',
-            headers: {'Content-Type': 'application/json'},
-        };
-
-        const response = await fetch('http://localhost:8080/room/by_id/' + id, requestOptions);
-        return JSON.parse(await response.text());
+        const response = await StateManager.axios.request('GET', HttpRoomApi.path + "/by_id/" + id, null);
+        return response.data;
     }
 
     public static async createRoom(roomData: CreateRoomData): Promise<number> {
-        const requestOptions = {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(roomData)
-        };
-        // console.log("createRoom request body: " + requestOptions.body);
-
-        const response = await fetch('http://localhost:8080/room/create', requestOptions);
-        const roomId = await response.text();
-        // console.log("createRoom id:" + roomId)
-        return Number.parseInt(roomId);
+        const response = await StateManager.axios.request('POST', HttpRoomApi.path + "/create", roomData);
+        console.log(response.data)
+        console.log(Number.parseInt(response.data))
+        return Number.parseInt(response.data);
     }
 }

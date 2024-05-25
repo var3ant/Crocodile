@@ -3,13 +3,12 @@ package ru.nsu.fit.borzov.crocodile.service;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.client.ChatRequest;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.client.DrawRequest;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.client.http.CheckAvailableConnection;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.client.http.CreateRoom;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.server.*;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.ChatRequest;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.DrawRequest;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.CheckAvailableConnectionHttpRequest;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.CreateRoomHttpRequest;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.server.*;
 import ru.nsu.fit.borzov.crocodile.model.Room;
 import ru.nsu.fit.borzov.crocodile.model.User;
 import ru.nsu.fit.borzov.crocodile.repository.RoomRepository;
@@ -223,7 +222,7 @@ public class RoomService {
         return null;//TODONOW:
     }
 
-    public boolean isConnectionAvailable(long userId, long roomId, CheckAvailableConnection connectionData) {
+    public boolean isConnectionAvailable(long userId, long roomId, CheckAvailableConnectionHttpRequest connectionData) {
         var userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty()) {
             //TODO: error
@@ -262,7 +261,7 @@ public class RoomService {
         return room;
     }
 
-    public Long create(CreateRoom createRoomRequest) throws Exception {
+    public Long create(CreateRoomHttpRequest createRoomRequest) throws Exception {
         var isExists = roomRepository.existsByName(createRoomRequest.getName());
 
         if (isExists) {

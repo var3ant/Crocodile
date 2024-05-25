@@ -9,14 +9,15 @@ import {NewDrawerEvent} from "./Events/NewDrawerEvent";
 import {InfoMessageEvent} from "./Events/InfoMessageEvent";
 import {UserMessageEvent} from "./Events/UserMessageEvent";
 import {DrawEvent, Point} from "./Events/DrawEvent";
+import {AxiosService} from "./Http/AxiosService";
 
 class RoomConnection {
-    private readonly _userId: string;
+    private readonly _userId: number;
     private readonly _cookies: Cookies
     private _roomId: string | null = null;
     private _roomModel: RoomModel;
     //
-    constructor(roomModel: RoomModel, userId: string, roomId: string) {
+    constructor(roomModel: RoomModel, userId: number, roomId: string) {
         this._roomModel = roomModel;
         this._userId = userId;
         this._roomId = roomId;
@@ -33,7 +34,7 @@ class RoomConnection {
                 return new ChooseWordEvent(body["words"])
 
             case "NEW_DRAWER_MESSAGE":
-                return new NewDrawerEvent(body["userId"].toString())//TODO: тут он number изначально
+                return new NewDrawerEvent(body["userId"])
 
             case "INFO_MESSAGE":
                 return new InfoMessageEvent(body["text"]);
@@ -61,17 +62,13 @@ class RoomConnection {
             console.log("client not null")
             return;
         }
-        // document.cookie.split(";").forEach(function (c) {
-        //     document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-        // });
-        // window.localStorage.clear()
-        // document.cookie = "userId=" + this._userId + ';';
-        this._cookies.set("userId", this._userId, {path: '/'})
+        // this._cookies.set("userId", this._userId, {path: '/'})
         let sockJS = new SockJS("http://localhost:8080/game");
         this._client = Stomp.over(sockJS);
         // console.log("before connect")
         // onConnected: (frame?: Frame | undefined) => any, onError?: ((error: string | Frame) => any) | undefined
-        this._client.connect({}, () => {this.joinRoom()}, (error: string | Frame) => console.log("connect error:" + error));
+        console.log("token: " + AxiosService.getAuthToken())
+        this._client.connect({Authorization: `Bearer ${AxiosService.getAuthToken()}`}, () => {this.joinRoom()}, (error: string | Frame) => console.log("connect error:" + error));
     }
 
     private subscribe(topic: string, onMessageReceived: ((message: Stomp.Message) => any)) {

@@ -62,7 +62,6 @@ export function CreateRoomForm(
                 let roomData = createRoomData();
                 console.log(roomData)
                 HttpRoomApi.createRoom(roomData).then(roomId => {
-                    let userId = StateManager.userId;
                     StateManager.setRoom(roomId);
                     navigate(PagesEnum.ROOM + roomId);
                 })

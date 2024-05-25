@@ -2,8 +2,8 @@ package ru.nsu.fit.borzov.crocodile.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.client.http.CheckAvailableConnection;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.client.http.CreateRoom;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.CheckAvailableConnectionHttpRequest;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.CreateRoomHttpRequest;
 import ru.nsu.fit.borzov.crocodile.model.Room;
 import ru.nsu.fit.borzov.crocodile.service.RoomService;
 
@@ -23,7 +23,7 @@ public class RoomController {
 //    }
 
     @PostMapping("/create")
-    public Long createRoom(@RequestBody CreateRoom createRoomRequest) throws Exception {
+    public Long createRoom(@RequestBody CreateRoomHttpRequest createRoomRequest) throws Exception {
         return roomService.create(createRoomRequest);
     }
 
@@ -40,7 +40,7 @@ public class RoomController {
     @PostMapping("check_available_connection/{roomId}")
     public boolean checkAvailableConnection(
             @PathVariable long roomId,
-            CheckAvailableConnection checkAvailableConnectionDto,
+            @RequestBody CheckAvailableConnectionHttpRequest checkAvailableConnectionDto,
             Principal principal) throws Exception {
         var userId = Long.parseLong(principal.getName());
         return roomService.isConnectionAvailable(userId, roomId, checkAvailableConnectionDto);

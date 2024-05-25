@@ -3,7 +3,7 @@ package ru.nsu.fit.borzov.crocodile.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.server.ServerMessage;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.server.ServerMessage;
 
 @Service
 @RequiredArgsConstructor
