@@ -94,7 +94,13 @@ export function RoomPage() {
                 room.leave();
                 navigate(PagesEnum.ROOM_LIST);
             }}>Leave</Button>
-            <Space>
+            <Space style={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+            }}>
                 <ChooseWordDialog ref={_chooseWordDialog}
                                   words={wordsToChoose}
                                   onClose={(index: number, word: string) => chooseWord(index, word)}

@@ -8,13 +8,13 @@ import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.LoginResponse;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.LoginRequest;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.RegisterRequest;
 import ru.nsu.fit.borzov.crocodile.exception.AlreadyExistException;
+import ru.nsu.fit.borzov.crocodile.exception.IlligalNameException;
 import ru.nsu.fit.borzov.crocodile.exception.InvalidUserAuthDataException;
 import ru.nsu.fit.borzov.crocodile.service.UserService;
 
 import java.util.List;
 
 //FIXME: затычка вместо авторизации, чтобы пока заняться самой игрой. Нужно будет заменить.
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public long register(@RequestBody RegisterRequest registerRequest) throws AlreadyExistException {
+    public long register(@RequestBody RegisterRequest registerRequest) throws AlreadyExistException, IlligalNameException {
         return userService.register(registerRequest);
     }
 

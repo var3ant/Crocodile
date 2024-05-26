@@ -14,7 +14,7 @@ class App extends React.Component<{}, { isGameFound: boolean }> {
             return (
                 <div className="App">
                     <header className="App-header">
-                        <RoomPage/>
+                        {/*<RoomPage/>*/}
                     </header>
                 </div>
             );

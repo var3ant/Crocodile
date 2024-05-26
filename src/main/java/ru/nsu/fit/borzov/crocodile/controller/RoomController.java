@@ -10,7 +10,6 @@ import ru.nsu.fit.borzov.crocodile.service.RoomService;
 import java.security.Principal;
 import java.util.List;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/room")
 @RequiredArgsConstructor

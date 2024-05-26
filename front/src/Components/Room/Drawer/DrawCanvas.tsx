@@ -1,10 +1,14 @@
+import Card from "antd/es/card";
 import * as React from "react";
 import {Point} from "../../../Classes/Events/DrawEvent";
 
 const width = 600
 const height = 600
 
-export class DrawCanvas extends React.Component<{ canUserPaint: boolean, drawSubscriber: (startPoint: Point, finishPoint: Point) => void }, {}> {
+export class DrawCanvas extends React.Component<{
+    canUserPaint: boolean,
+    drawSubscriber: (startPoint: Point, finishPoint: Point) => void
+}, {}> {
     private readonly _canvasRef: React.RefObject<any>;
     private _isPainting: boolean
     private _ctx: any
@@ -31,15 +35,17 @@ export class DrawCanvas extends React.Component<{ canUserPaint: boolean, drawSub
 
     render() {
         return (
-            <canvas
-                ref={this._canvasRef}
-                width={width}
-                height={height}
-                onMouseDown={e => this.mouseDown(e)}
-                onMouseUp={e => this.mouseUp(e)}
-                onMouseMove={e => this.mouseMove(e)}
-                style={canvasStyle}
-            />
+            <Card>
+                <canvas
+                    ref={this._canvasRef}
+                    width={width}
+                    height={height}
+                    onMouseDown={e => this.mouseDown(e)}
+                    onMouseUp={e => this.mouseUp(e)}
+                    onMouseMove={e => this.mouseMove(e)}
+                    style={canvasStyle}
+                />
+            </Card>
         )
     }
 
@@ -59,7 +65,7 @@ export class DrawCanvas extends React.Component<{ canUserPaint: boolean, drawSub
 
     private mouseMove(e: React.MouseEvent<HTMLElement>) {
         // console.log("move can paint: " + this.props.canUserPaint)
-        if(!this.props.canUserPaint) {
+        if (!this.props.canUserPaint) {
             return;
         }
         if (!this._isPainting) {
@@ -70,7 +76,7 @@ export class DrawCanvas extends React.Component<{ canUserPaint: boolean, drawSub
             throw new Error();
         }
 
-        let newPoint =  this.calculatePosition(e);
+        let newPoint = this.calculatePosition(e);
         this.drawSubscriber(this._startPoint, newPoint);
         this.drawLine(this._startPoint, newPoint);
         this.setPosition(newPoint);
@@ -94,5 +100,5 @@ export class DrawCanvas extends React.Component<{ canUserPaint: boolean, drawSub
 }
 
 const canvasStyle = {
-    border: "2px solid black"
+    // border: "2px solid black"
 }
