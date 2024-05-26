@@ -42,7 +42,8 @@ export function RoomBrowser(
 
     return (
         <Flex gap="middle" justify="left" vertical>
-            <Table columns={columns} dataSource={rows}
+            <Table style={{minHeight: 500, maxHeight: 500, backgroundColor: "white"}} locale={{emptyText: ' '}}
+                   columns={columns} dataSource={rows}
                    onRow={(roomView, rowIndex) => {
                        return {
                            onClick: event => {
@@ -59,6 +60,7 @@ export function RoomBrowser(
         </Flex>
     );
 }
+
 // private
 //     getRandomInt(max
 // :

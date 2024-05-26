@@ -6,6 +6,7 @@ import {Point} from "./Events/DrawEvent";
 class RoomModel {
     public Messages: MessageData[];
     public readonly userId: number;
+    public readonly name: string;
 
     private _roomConnection: RoomConnection
     private _eventSubscriber: ((event: ServerEvent) => void) | null = null;
@@ -15,6 +16,11 @@ class RoomModel {
         this._roomConnection = new RoomConnection(this, userId, roomId);
         this._roomConnection.connect()
         this.userId = userId;
+        this.name = roomId.toString();//TODO: имя а не id
+    }
+
+    public getName(): string {
+        return this.name;
     }
 
     wordChosen(index: number) {

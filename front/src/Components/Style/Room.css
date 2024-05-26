@@ -1,6 +1,42 @@
-.table-component {
-    position: sticky;
-    top: 0;
-    left: 0;
-    width: 50%;
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body,
+html {
+    background-color: bisque;
+}
+
+.room_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.form_container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.outer_frame {
+    margin: 50px 100px 0 100px;
+}
+
+.vertical {
+    display: flex;
+    flex-direction: column;
+}
+
+.grid_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    background-color: white;
 }

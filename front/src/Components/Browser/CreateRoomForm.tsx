@@ -23,9 +23,11 @@ export function CreateRoomForm(
         return {name: name, password: password, maxPlayers: maxPlayers};
     }
 
+    const rowStyle = {width: "100%", justifyContent: 'center'}
+
     return (
-        <Card style={{width: "60%"}}>
-            <Row>
+        <Card>
+            <Row style={rowStyle}>
                 <Col span={5}>
                     <label>Name:</label>
                 </Col>
@@ -36,7 +38,7 @@ export function CreateRoomForm(
                     />
                 </Col>
             </Row>
-            <Row>
+            <Row style={rowStyle}>
                 <Col span={5}>
                     <label>Password:</label>
                 </Col>
@@ -47,7 +49,7 @@ export function CreateRoomForm(
                     />
                 </Col>
             </Row>
-            <Row>
+            <Row style={rowStyle}>
                 <Col span={5}>
                     <label>Max players:</label>
                 </Col>
@@ -58,16 +60,17 @@ export function CreateRoomForm(
                     />
                 </Col>
             </Row>
-            <Button type="primary" onClick={e => {
-                let roomData = createRoomData();
-                console.log(roomData)
-                HttpRoomApi.createRoom(roomData).then(roomId => {
-                    StateManager.setRoom(roomId);
-                    navigate(PagesEnum.ROOM + roomId);
-                })
-            }}>
-                Create
-            </Button>
+                <Button
+                    type="primary" onClick={e => {
+                    let roomData = createRoomData();
+                    console.log(roomData)
+                    HttpRoomApi.createRoom(roomData).then(roomId => {
+                        StateManager.setRoom(roomId);
+                        navigate(PagesEnum.ROOM + roomId);
+                    })
+                }}>
+                    Create
+                </Button>
         </Card>
     );
 }

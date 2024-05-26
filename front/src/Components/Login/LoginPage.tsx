@@ -11,9 +11,11 @@ function LoginPage() {
     const navigate = useNavigate();
 
     return (
-        <Space direction="vertical">
-            <Button onClick={() => {navigate(PagesEnum.LOGIN)}}>Register</Button>
+        <Space direction="vertical" className='form_container'>
+            <Button onClick={() => {navigate(PagesEnum.Register)}}>Create New Account</Button>
+            <h1>Authorization</h1>
             <Login
+                buttonText='Log In'
                 onClick={(login, password) => ServerRequests.login(login, password).then((id) => {
                 if (id === null) {
                     setErrorMessage("cannot login")

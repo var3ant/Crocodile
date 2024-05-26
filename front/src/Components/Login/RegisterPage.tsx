@@ -10,9 +10,11 @@ function RegisterPage() {
     const navigate = useNavigate();
 
     return (
-        <Space direction="vertical">
-            <Button onClick={() => {navigate(PagesEnum.LOGIN)}}>Login</Button>
+        <Space direction="vertical" className='form_container'>
+            <Button onClick={() => {navigate(PagesEnum.LOGIN)}}>Sing In</Button>
+            <h1>Registration</h1>
             <Login
+                buttonText='Create Account'
                 onClick={(login, password) => ServerRequests.register(login, password).then((id) => {
                 if (id === null) {
                     setErrorMessage("cannot register")

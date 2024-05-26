@@ -84,8 +84,8 @@ export function RoomPage() {
     const navigate = useNavigate();
 
     return (
-        <Flex>
-            <Button onClick={e => {
+        <div className='vertical'>
+            <Button style={{width: 'fit-content', alignSelf: 'center'}} onClick={e => {
                 let room = StateManager.getRoom();
                 if (room === null) {
                     console.assert("onClickLeave: room === null")
@@ -94,28 +94,31 @@ export function RoomPage() {
                 room.leave();
                 navigate(PagesEnum.ROOM_LIST);
             }}>Leave</Button>
-            <Space style={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
-            }}>
-                <ChooseWordDialog ref={_chooseWordDialog}
-                                  words={wordsToChoose}
-                                  onClose={(index: number, word: string) => chooseWord(index, word)}
-                />
-                <DrawCanvas ref={_canvas}
-                            canUserPaint={isDrawer && word !== null}
-                            drawSubscriber={(startPoint: Point, finishPoint: Point) =>
-                                clientNewDraw(startPoint, finishPoint)}/>
-                <Chat ref={_chat}
-                      canType={!isDrawer}
-                      messages={messages}
-                      sendNewMessage={(message: string) => clientNewMessage(message)}
-                />
-            </Space>
-        </Flex>
+            <h1 style={{alignSelf: 'center'}}>Room: {StateManager.getRoom()?.getName() ?? ""}</h1>
+            <Flex className='room_container outer_frame'>
+                <Space style={{
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                }}>
+                    <ChooseWordDialog ref={_chooseWordDialog}
+                                      words={wordsToChoose}
+                                      onClose={(index: number, word: string) => chooseWord(index, word)}
+                    />
+                    <DrawCanvas ref={_canvas}
+                                canUserPaint={isDrawer && word !== null}
+                                drawSubscriber={(startPoint: Point, finishPoint: Point) =>
+                                    clientNewDraw(startPoint, finishPoint)}/>
+                    <Chat ref={_chat}
+                          canType={!isDrawer}
+                          messages={messages}
+                          sendNewMessage={(message: string) => clientNewMessage(message)}
+                    />
+                </Space>
+            </Flex>
+        </div>
     );
 }
 
