@@ -14,7 +14,7 @@ import ru.nsu.fit.borzov.crocodile.service.UserService;
 
 import java.util.List;
 
-//FIXME: затычка вместо авторизации, чтобы пока заняться самой игрой. Нужно будет заменить.
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor

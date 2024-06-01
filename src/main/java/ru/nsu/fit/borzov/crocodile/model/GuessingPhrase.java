@@ -1,5 +1,6 @@
 package ru.nsu.fit.borzov.crocodile.model;
 
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,20 +8,11 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class FriendRequest {
+public class GuessingPhrase {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     private long id;
 
-    @ManyToOne
-    private User requestFrom;
-
-    @ManyToOne
-    private User requestTo;
-
-    public FriendRequest(User from, User to) {
-        this.requestFrom = from;
-        this.requestTo = to;
-    }
+    private String phrase;
 }

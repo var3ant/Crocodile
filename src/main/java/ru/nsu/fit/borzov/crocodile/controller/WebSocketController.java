@@ -1,6 +1,7 @@
 package ru.nsu.fit.borzov.crocodile.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -11,6 +12,11 @@ import ru.nsu.fit.borzov.crocodile.controller.util.PrincipalUtils;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.ChatRequest;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.ChooseWordRequest;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.DrawRequest;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.DrawerImageRequest;
+import ru.nsu.fit.borzov.crocodile.exception.IlligalRequestArgumentException;
+import ru.nsu.fit.borzov.crocodile.exception.UserNotFoundException;
+import ru.nsu.fit.borzov.crocodile.exception.UserNotInRoomException;
+import ru.nsu.fit.borzov.crocodile.exception.WrongGameRoleException;
 import ru.nsu.fit.borzov.crocodile.service.RoomService;
 
 import java.security.Principal;
@@ -19,55 +25,65 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class WebSocketController {
     private final RoomService roomService;
+    private final PrincipalUtils principalUtils;
 
-    @MessageMapping("/chat/{roomId}")
-    public void chat(@DestinationVariable long roomId, ChatRequest message, Principal principal) {
-        var userId = PrincipalUtils.getUserId(principal);
-        roomService.sendChatMessage(message, userId, roomId);
-        var logger = LoggerFactory.getLogger(WebSocketController.class);
-        logger.info(message.getMessage());
+    private final Logger logger = LoggerFactory.getLogger(WebSocketController.class);
+
+    @MessageMapping("/chat")
+    public void chat(ChatRequest message, Principal principal) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException {
+        var userId = principalUtils.getUserId(principal);
+        roomService.sendChatMessage(message, userId);
     }
 
-    @MessageMapping("/choose_word/{roomId}")
-    public void chooseWord(@DestinationVariable long roomId, ChooseWordRequest chooseWordRequest, Principal principal) {
-        var userId = PrincipalUtils.getUserId(principal);
-        roomService.chooseWord(userId, roomId, Integer.parseInt(chooseWordRequest.getIndex()));
+    @MessageMapping("/choose_word")
+    public void chooseWord(ChooseWordRequest chooseWordRequest, Principal principal) throws UserNotFoundException, UserNotInRoomException, WrongGameRoleException, IlligalRequestArgumentException {
+        var userId = principalUtils.getUserId(principal);
+        roomService.chooseWord(userId, Integer.parseInt(chooseWordRequest.getIndex()));
     }
 
-    @MessageMapping("/draw/{roomId}")
-    public void draw(@DestinationVariable long roomId, DrawRequest draw, Principal principal) {
-        var userId = PrincipalUtils.getUserId(principal);
-        roomService.sendDrawMessage(draw, userId, roomId);
+    @MessageMapping("/draw")
+    public void draw(DrawRequest draw, Principal principal) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException {
+        var userId = principalUtils.getUserId(principal);
+        roomService.sendDrawMessage(draw, userId);
     }
 
-    //TODO: пока через отдельный метод, но нужно подумать, мб через эвентхэндлер. Надо понять откуда взять roomId.
+    @MessageMapping("/send_image")
+    public void sendImage(DrawerImageRequest drawerImage, Principal principal) throws UserNotFoundException, UserNotInRoomException {
+        var userId = principalUtils.getUserId(principal);
+        roomService.sendImage(userId, drawerImage.getImage(), drawerImage.getReceiverId());
+    }
+
     @MessageMapping("/join/{roomId}")
-    public void joinRoom(@DestinationVariable String roomId, Principal principal) throws Exception {
+    public void joinRoom(@DestinationVariable String roomId, Principal principal) throws UserNotFoundException {
         try {
-            var userId = PrincipalUtils.getUserId(principal);
+            var userId = principalUtils.getUserId(principal);
             var roomIdInt = Long.parseLong(roomId);
             roomService.join(userId, roomIdInt);
-        } catch (NumberFormatException e) {
-            throw new Exception("invalid id");
+        } catch (NumberFormatException ignored) {
+            logger.warn("Join request with wrong roomId type {}", roomId);
         }
-
     }
 
     @MessageMapping("/disconnect")
     public void disconnectRoom(Principal principal) {
-        var userId = PrincipalUtils.getUserId(principal);
+        var userId = principalUtils.getUserId(principal);
 
-        roomService.disconnect(userId);
+        try {
+            roomService.disconnect(userId);
+        } catch (UserNotFoundException e) {
+            logger.error("User disconnect by message, but user doesnt exist {}", userId);
+        }
     }
 
     @EventListener
     private void handleSessionDisconnect(SessionDisconnectEvent event) {
         var user = event.getUser();
-        if (user == null) {
-            return;//TODO:
-        }
-        var userId = PrincipalUtils.getUserId(user);//TODO:exception
+        var userId = principalUtils.getUserId(user);
 
-        roomService.disconnect(userId);
+        try {
+            roomService.disconnect(userId);
+        } catch (UserNotFoundException e) {
+            logger.error("User disconnect by session handler, but user doesnt exist {}", userId);
+        }
     }
 }

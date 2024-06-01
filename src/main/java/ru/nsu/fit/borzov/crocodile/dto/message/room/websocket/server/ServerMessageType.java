@@ -4,7 +4,9 @@ public enum ServerMessageType {
     CHAT_MESSAGE,
     DRAW_MESSAGE,
     NEW_DRAWER_MESSAGE,
-
     CHOOSE_WORD_MESSAGE,
-    INFO_MESSAGE
+    INFO_MESSAGE,
+    IMAGE_MESSAGE,
+
+    GET_IMAGE_MESSAGE
 }

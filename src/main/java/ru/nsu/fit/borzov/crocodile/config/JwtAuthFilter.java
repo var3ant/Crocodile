@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import ru.nsu.fit.borzov.crocodile.exception.AuthenticationException;
 import ru.nsu.fit.borzov.crocodile.service.JwtTokenUtil;
 import ru.nsu.fit.borzov.crocodile.service.UserService;
 
@@ -34,9 +35,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 try {
                     SecurityContextHolder.getContext().setAuthentication(
                             jwtTokenUtil.validateToken(userService, authElements[1]));
-                } catch (RuntimeException e) {
+                } catch (RuntimeException | AuthenticationException e) {
                     SecurityContextHolder.clearContext();
-                    throw e;
+                    throw new ServletException(e);
                 }
             }
         }

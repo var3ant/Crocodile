@@ -16,18 +16,23 @@ class RoomModel {
         this._roomConnection = new RoomConnection(this, userId, roomId);
         this._roomConnection.connect()
         this.userId = userId;
-        this.name = roomId.toString();//TODO: имя а не id
+        console.log(roomId)
+        this.name = roomId;//TODO: имя а не id
     }
 
     public getName(): string {
         return this.name;
     }
 
-    wordChosen(index: number) {
+    public sendImage(receiverId: number, image: string) {
+        this._roomConnection.sendImage(receiverId, image);
+    }
+
+    public wordChosen(index: number) {
         this._roomConnection.chooseWord(index);
     }
 
-    sendMessage(text: string): boolean {
+    public sendMessage(text: string): boolean {
         this._roomConnection.chat(text);
         return true;
     }
@@ -39,15 +44,15 @@ class RoomModel {
         }
     }
 
-    drawLine(startPoint: Point, finishPoint: Point) {
+    public drawLine(startPoint: Point, finishPoint: Point) {
         this._roomConnection.draw(startPoint, finishPoint);
     }
 
-    subscribeEvents(eventHandler: (event: ServerEvent) => void) {
+    public subscribeEvents(eventHandler: (event: ServerEvent) => void) {
         this._eventSubscriber = eventHandler;
     }
 
-    leave() {
+    public leave() {
         this._roomConnection.disconnect();
     }
 }

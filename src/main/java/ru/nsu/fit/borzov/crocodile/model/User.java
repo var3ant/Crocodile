@@ -21,7 +21,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private long id;
 
     @Size(max = 20)
     private String name;
@@ -46,7 +46,8 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public Long GetRoomId() {
+
+    public long GetRoomId() {
         return room.getId();
     }
 
@@ -86,17 +87,17 @@ public class User implements UserDetails {
         return true;
     }
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "following", cascade = CascadeType.ALL)
-    @JoinTable(name="user_relationship",
-            joinColumns={@JoinColumn(name="parent_id")},
-            inverseJoinColumns={@JoinColumn(name="user_id")})
-    private Set<User> followers = new HashSet<>();
-
-    @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name="user_relationship",
-            joinColumns={@JoinColumn(name="user_id")},
-            inverseJoinColumns={@JoinColumn(name="parent_id")})
-    private Set<User> following = new HashSet<>();
+//    @JsonIgnore
+//    @ManyToMany(mappedBy = "following", cascade = CascadeType.ALL)
+//    @JoinTable(name="user_relationship",
+//            joinColumns={@JoinColumn(name="parent_id")},
+//            inverseJoinColumns={@JoinColumn(name="user_id")})
+//    private Set<User> followers = new HashSet<>();
+//
+//    @JsonIgnore
+//    @ManyToMany(mappedBy = "followers", cascade = CascadeType.ALL)
+//    @JoinTable(name="user_relationship",
+//            joinColumns={@JoinColumn(name="user_id")},
+//            inverseJoinColumns={@JoinColumn(name="parent_id")})
+//    private Set<User> following = new HashSet<>();
 }

@@ -6,5 +6,6 @@ import lombok.Data;
 public class CreateRoomHttpRequest {
     private String name;
     private String password;
-    private Long maxPlayers;//TODO: тут можно и int
+    private long maxPlayers;//TODO: тут можно и int
+    private boolean hidden;
 }

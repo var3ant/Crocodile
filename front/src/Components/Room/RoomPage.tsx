@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Chat} from "./Chat/Chat";
 import {Button, Flex, Space} from "antd";
 import {ChooseWordDialog} from "./ChooseWordDialog";
@@ -11,23 +11,41 @@ import {InfoMessageEvent} from "../../Classes/Events/InfoMessageEvent";
 import {NewDrawerEvent} from "../../Classes/Events/NewDrawerEvent";
 import {DrawEvent, Point} from "../../Classes/Events/DrawEvent";
 import {ChooseWordEvent} from "../../Classes/Events/ChooseWordEvent";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {PagesEnum} from "../../index";
+import {RequestImageEvent} from "../../Classes/Events/RequestImageEvent";
+import {ReceiveImageEvent} from "../../Classes/Events/ReceiveImageEvent";
 
 export function RoomPage() {
     const _canvas: React.RefObject<DrawCanvas> = React.createRef();
     const _chooseWordDialog: React.RefObject<ChooseWordDialog> = React.createRef();
     const _chat: React.RefObject<Chat> = React.createRef();
 
-    // constructor(props: any) {
-    //     StateManager.getRoom()?.subscribeEvents((event => {
-    //         this.eventHandler(event)
-    //     }));
-    // }
     const [messages, setMessages] = useState<MessageData[]>([]);
     const [wordsToChoose, setWordsToChoose] = useState<string[] | null>(null);
     const [word, setWord] = useState<string | null>(null)
     const [isDrawer, setIsDrawer] = useState<boolean>(false)
+
+    const params = useParams();
+
+    //connect to game
+    useEffect(() => {
+        console.log("useeffect: " + params.roomId)
+        if (StateManager.getRoom() == null) {
+            console.log(params)
+            const roomIdString = params.roomId;
+            if (roomIdString === undefined) {
+                throw new Error("roomId not defined");
+            }
+
+            const roomId = Number.parseInt(roomIdString);
+            if (Number.isNaN(roomId)) {
+                throw new Error("roomId not defined");
+            }
+
+            StateManager.trySetRoom(roomId);//TODO: обработку что коннект не получился
+        }
+    });
 
     const eventHandler = (event: ServerEvent) => {
         if (event instanceof UserMessageEvent) {
@@ -52,6 +70,15 @@ export function RoomPage() {
         } else if (event instanceof ChooseWordEvent) {
 
             setWordsToChoose(event.words)
+
+        } else if (event instanceof RequestImageEvent) {
+
+            let image = _canvas.current?.getImage() ?? '';
+            StateManager.getRoom()?.sendImage(event.receiverId, image);
+
+        } else if (event instanceof ReceiveImageEvent) {
+
+            _canvas.current?.setImage(event.image);
 
         }
     }
@@ -94,7 +121,7 @@ export function RoomPage() {
                 room.leave();
                 navigate(PagesEnum.ROOM_LIST);
             }}>Leave</Button>
-            <h1 style={{alignSelf: 'center'}}>Room: {StateManager.getRoom()?.getName() ?? ""}</h1>
+            <h1 style={{alignSelf: 'center'}}>Room: {params.roomId}</h1>
             <Flex className='room_container outer_frame'>
                 <Space style={{
                     width: "100%",

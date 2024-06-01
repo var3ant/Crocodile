@@ -22,13 +22,10 @@ class ChatArea extends React.Component<{ Messages: MessageData[] }> {
                 overflowY: 'visible',
                 overflowX: 'hidden'
             }}>
-                <List
+                <List locale={{emptyText: ' '}}
                     dataSource={this.props.Messages}
                     renderItem={(item: MessageData) => (
                         <List.Item key={item.id}>
-                            {/*<List.Item.Meta*/}
-                            {/*    title={item.name}*/}
-                            {/*/>*/}
                             <div style={{width: "100%"}}>
                                 <div style={{wordBreak: "break-word", textAlign: "left"}}>
                                     <b>{item.name}: </b>{item.text}</div>

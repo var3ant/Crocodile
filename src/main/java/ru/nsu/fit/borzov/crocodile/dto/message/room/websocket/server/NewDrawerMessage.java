@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public class NewDrawerMessage extends ServerMessage {
-    private final Long userId;
+    private final long userId;
 
-    public NewDrawerMessage(Long userId) {
+    public NewDrawerMessage(long userId) {
         super(ServerMessageType.NEW_DRAWER_MESSAGE);
         this.userId = userId;
     }

@@ -6,15 +6,16 @@ export class StateManager {
     public static userId: number | null;
     public static axios: AxiosService = new AxiosService();
 
-    static setRoom(roomId: number) {
+    static trySetRoom(roomId: number): boolean {
         console.log("set roomid:" + roomId)
         let userId = StateManager.userId;
         if (userId === null) {
             console.assert("userId === null")
-            return
+            return false;
         }
 
         StateManager.room = new RoomModel(userId, roomId.toString());//TODO: сделать чтобы нормально число хранилось
+        return true;//TODO: обработка ошибок
     }
 
     static getRoom(): RoomModel | null {

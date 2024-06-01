@@ -14,6 +14,7 @@ export class DrawCanvas extends React.Component<{
     private _ctx: any
     private _startPoint: Point | null = null
     private readonly drawSubscriber: (startPoint: Point, finishPoint: Point) => void;
+    private t: number = 0;
 
     constructor(props: any) {
         super(props);
@@ -26,6 +27,33 @@ export class DrawCanvas extends React.Component<{
     public clear() {
         this._ctx.strokeStyle = '#ffffff';
         this._ctx.clearRect(0, 0, this._canvasRef.current.width, this._canvasRef.current.height);
+    }
+
+    public getImage(): string {
+        return this._canvasRef.current.toDataURL("image/png");
+    }
+
+    public setImage(imageSource: string) {
+        let image = new Image();
+        image.onload = () => {
+            this._ctx.drawImage(image, 0, 0)
+        };
+        image.src = imageSource;
+        // image.src = 'https://www.tutorialspoint.com/images/logo.png';
+        // this._ctx.drawImage(image, 0, 0)
+
+    }
+
+    public drawLine(startPoint: Point, finishPoint: Point) {
+        let ctx = this._ctx;
+
+        ctx.beginPath(); // begin
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#c0392b';
+        ctx.moveTo(startPoint.x, startPoint.y); // from
+        ctx.lineTo(finishPoint.x, finishPoint.y); // to
+        ctx.stroke(); // draw it!
     }
 
     componentDidMount() {
@@ -84,18 +112,6 @@ export class DrawCanvas extends React.Component<{
 
     private setPosition(newPoint: Point) {
         this._startPoint = newPoint;
-    }
-
-    public drawLine(startPoint: Point, finishPoint: Point) {
-        let ctx = this._ctx;
-
-        ctx.beginPath(); // begin
-        ctx.lineWidth = 5;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = '#c0392b';
-        ctx.moveTo(startPoint.x, startPoint.y); // from
-        ctx.lineTo(finishPoint.x, finishPoint.y); // to
-        ctx.stroke(); // draw it!
     }
 }
 

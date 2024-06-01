@@ -27,16 +27,4 @@ export class ServerRequests {
         //TODO: кейс с ошибкой
         return result.data.id;
     }
-
-    // public static async createRoom(text: string): Promise<string> {
-    //     const requestOptions = {
-    //         method: 'POST',
-    //         headers: {'Content-Type': 'application/json'},
-    //         body: ""
-    //     };
-    //
-    //     const response = await fetch('http://localhost:8080/room/' + text, requestOptions);
-    //     const roomId = await response.text();
-    //     return roomId;
-    // }
 }

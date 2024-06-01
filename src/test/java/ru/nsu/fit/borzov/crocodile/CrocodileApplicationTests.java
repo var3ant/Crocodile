@@ -8,6 +8,8 @@ class CrocodileApplicationTests {
 
     @Test
     void contextLoads() {
+        //TODO: тесты
+        assert true;
     }
 
 }

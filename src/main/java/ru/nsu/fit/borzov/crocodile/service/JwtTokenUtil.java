@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import ru.nsu.fit.borzov.crocodile.exception.AuthenticationException;
 import ru.nsu.fit.borzov.crocodile.exception.UserNotFoundException;
 import ru.nsu.fit.borzov.crocodile.model.User;
 
@@ -38,14 +39,14 @@ public class JwtTokenUtil {
                 .sign(algorithm);
     }
 
-    public Authentication validateToken(UserService userService, String token) {
+    public Authentication validateToken(UserService userService, String token) throws AuthenticationException {
         var decodedToken = decodeToken(token);
 
         try {
             User user = userService.findByName(decodedToken.getSubject());
             return new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
         } catch (UserNotFoundException e) {
-            throw new RuntimeException(e);//TODONOW:
+            throw new AuthenticationException();
         }
 
     }

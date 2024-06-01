@@ -28,7 +28,7 @@ public class UserService {
 
     private final JwtTokenUtil jwtTokenUtil;
 
-    public Long register(RegisterRequest registerRequest) throws AlreadyExistException, IlligalNameException {
+    public long register(RegisterRequest registerRequest) throws AlreadyExistException, IlligalNameException {
 
         var isExists = userRepository.existsByName(registerRequest.getLogin());
 
@@ -51,10 +51,6 @@ public class UserService {
     public List<Long> getUsers() {
         return userRepository.findAll().stream().map(User::getId).toList();
     }
-
-//    public User findByLogin(String login) {
-//        return userRepository.findByName(login);
-//    }
 
     public LoginResponse login(LoginRequest loginRequest) throws InvalidUserAuthDataException {
         User user = userRepository.findByName(loginRequest.getLogin())

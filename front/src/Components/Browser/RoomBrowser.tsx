@@ -48,7 +48,7 @@ export function RoomBrowser(
                        return {
                            onClick: event => {
                                console.log(roomView.id + roomView.name);
-                               StateManager.setRoom(roomView.id);
+                               StateManager.trySetRoom(roomView.id);
                                navigate(PagesEnum.ROOM + roomView.id);
                            }, // click row
                        };

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,11 +15,10 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private long id;
 
     @Column(unique = true)
     private String name;
-
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "room")
     private List<User> users = new ArrayList<>();
@@ -37,16 +37,16 @@ public class Room {
     @JsonIgnore
     private String password;//TODONOW: да, пароль строкой, и что ты мне сделаешь? У меня пользователи пока без пароля.
 
+    @Column(nullable = false)
+    private boolean hidden;
+
     public Room() {
 
     }
 
-    public Room(String name) {
-        this.name = name;
-    }
-
-    public Room(String name, String password) {
+    public Room(String name, String password, boolean hidden) {
         this.name = name;
         this.password = password;
+        this.hidden = hidden;
     }
 }

@@ -10,12 +10,15 @@ import {InfoMessageEvent} from "./Events/InfoMessageEvent";
 import {UserMessageEvent} from "./Events/UserMessageEvent";
 import {DrawEvent, Point} from "./Events/DrawEvent";
 import {AxiosService} from "./Http/AxiosService";
+import {RequestImageEvent} from "./Events/RequestImageEvent";
+import {ReceiveImageEvent} from "./Events/ReceiveImageEvent";
 
 class RoomConnection {
     private readonly _userId: number;
     private readonly _cookies: Cookies
     private _roomId: string | null = null;
     private _roomModel: RoomModel;
+
     //
     constructor(roomModel: RoomModel, userId: number, roomId: string) {
         this._roomModel = roomModel;
@@ -23,29 +26,49 @@ class RoomConnection {
         this._roomId = roomId;
         this._cookies = new Cookies();
     }
+
     private _client: Stomp.Client | null = null
 
     //region parse messages
-
     private parseServerMessage(body: any): ServerEvent {
         let messageType: string = body["type"];
         switch (messageType) {
-            case 'CHOOSE_WORD_MESSAGE':
-                return new ChooseWordEvent(body["words"])
+            case 'CHOOSE_WORD_MESSAGE': {
+                let words: string[] = body["words"];
+                return new ChooseWordEvent(words);
+            }
 
-            case "NEW_DRAWER_MESSAGE":
-                return new NewDrawerEvent(body["userId"])
+            case "NEW_DRAWER_MESSAGE": {
+                let userId: number = body["userId"];
+                return new NewDrawerEvent(userId);
+            }
 
-            case "INFO_MESSAGE":
-                return new InfoMessageEvent(body["text"]);
+            case "INFO_MESSAGE": {
+                let text: string = body["text"];
+                return new InfoMessageEvent(text);
+            }
 
-            case "CHAT_MESSAGE":
-                return new UserMessageEvent(body["userId"], body["text"])
+            case "CHAT_MESSAGE": {
+                let userId: number = body["userId"];
+                let text: string = body["text"];
+                return new UserMessageEvent(userId, text)
+            }
 
-            case "DRAW_MESSAGE":
+            case "DRAW_MESSAGE": {
                 let startPoint: Point = body["startPoint"];
                 let finishPoint: Point = body["finishPoint"];
                 return new DrawEvent(startPoint, finishPoint);
+            }
+
+            case "IMAGE_MESSAGE": {
+                let image: string = body["image"];
+                return new ReceiveImageEvent(image);
+            }
+
+            case "GET_IMAGE_MESSAGE": {
+                let receiverId: number = body["receiverId"];
+                return new RequestImageEvent(receiverId);
+            }
 
             default:
                 throw new Error();
@@ -68,7 +91,9 @@ class RoomConnection {
         // console.log("before connect")
         // onConnected: (frame?: Frame | undefined) => any, onError?: ((error: string | Frame) => any) | undefined
         console.log("token: " + AxiosService.getAuthToken())
-        this._client.connect({Authorization: `Bearer ${AxiosService.getAuthToken()}`}, () => {this.joinRoom()}, (error: string | Frame) => console.log("connect error:" + error));
+        this._client.connect({Authorization: `Bearer ${AxiosService.getAuthToken()}`}, () => {
+            this.joinRoom()
+        }, (error: string | Frame) => console.log("connect error:" + error));
     }
 
     private subscribe(topic: string, onMessageReceived: ((message: Stomp.Message) => any)) {
@@ -89,15 +114,17 @@ class RoomConnection {
     }
 
     private joinRoom() {
-        // console.log("join after connect")
-        this.sendMessage("/join/" + this._roomId, {})
-        this.subscribe("/topic/session/" +  this._roomId, (m) => {
+        console.log("subscribe topic after connect")
+        this.subscribe("/topic/session/" + this._roomId, (m) => {
             this._roomModel.handleEvent(this.parseServerMessage(JSON.parse(m.body)));
         });
 
+        console.log("subscribe user after connect")
         this.subscribe("/user/queue/session", (m) => {
             this._roomModel.handleEvent(this.parseServerMessage(JSON.parse(m.body)));
         });
+        console.log("join after connect")
+        this.sendMessage("/join/" + this._roomId, {})
     }
 
     //endregion
@@ -109,18 +136,23 @@ class RoomConnection {
         this._roomId = null;
     }
 
+    public sendImage(receiverId: number, image: string) {
+        this.sendMessage("/send_image", {receiverId: receiverId, image: image});
+    }
+
     public chat(text: string) {
-        this.sendMessage("/chat/" + this._roomId, {message: text});
+        this.sendMessage("/chat", {message: text});
     }
 
     public draw(startPoint: Point, finishPoint: Point) {
-        this.sendMessage("/draw/" + this._roomId, {startPoint: startPoint, finishPoint: finishPoint});
+        this.sendMessage("/draw", {startPoint: startPoint, finishPoint: finishPoint});
     }
 
     public chooseWord(index: number) {
-        this.sendMessage("/choose_word/" + this._roomId, {index: index.toString()});
+        this.sendMessage("/choose_word", {index: index.toString()});
     }
 
     //endregion
 }
+
 export default RoomConnection;

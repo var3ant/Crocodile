@@ -10,10 +10,12 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import ru.nsu.fit.borzov.crocodile.exception.AuthenticationException;
 import ru.nsu.fit.borzov.crocodile.service.JwtTokenUtil;
 import ru.nsu.fit.borzov.crocodile.service.UserService;
 
@@ -42,22 +44,33 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             public Message<?> preSend(Message<?> message, MessageChannel unused) {
                 StompHeaderAccessor accessor =
                         MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-//                log.info("Headers: {}", accessor);
-
                 assert accessor != null;
-                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
 
-                    String authorizationHeader = accessor.getFirstNativeHeader("Authorization");
-                    assert authorizationHeader != null;
-                    String token = authorizationHeader.substring(7);
-                    var userAuthentication = jwtTokenUtil.validateToken(userService, token);
-                    SecurityContextHolder.getContext().setAuthentication(userAuthentication);
-                    accessor.setUser(userAuthentication);
+                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+                    try {
+                        var authentication = getAuthenticationByAccessor(accessor);
+
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        accessor.setUser(authentication);
+                    } catch (AuthenticationException e) {
+                        SecurityContextHolder.clearContext();
+                        accessor.setUser(null);
+                    }
                 }
 
                 return message;
             }
 
         });
+    }
+
+    private Authentication getAuthenticationByAccessor(StompHeaderAccessor accessor) throws AuthenticationException {
+        String authorizationHeader = accessor.getFirstNativeHeader("Authorization");
+        if (authorizationHeader == null) {
+            throw new AuthenticationException();
+        }
+        String token = authorizationHeader.substring(7);
+
+        return jwtTokenUtil.validateToken(userService, token);
     }
 }
