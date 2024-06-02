@@ -13,10 +13,14 @@ class Point {
 class DrawEvent implements ServerEvent {
     public startPoint: Point;
     public finishPoint: Point;
+    public color: string;
+    public size: number;
 
-    constructor(startPoint: Point, finishPoint: Point) {
+    constructor(startPoint: Point, finishPoint: Point, color: string, size: number) {
         this.startPoint = startPoint;
         this.finishPoint = finishPoint;
+        this.color = color;
+        this.size = size;
     }
 }
 

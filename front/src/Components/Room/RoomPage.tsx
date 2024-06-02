@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Chat} from "./Chat/Chat";
 import {Button, Flex, Space} from "antd";
 import {ChooseWordDialog} from "./ChooseWordDialog";
-import {DrawCanvas} from "./Drawer/DrawCanvas";
+import {DrawCanvas, PaintingSettings} from "./Drawer/DrawCanvas";
 import {StateManager} from "../../Classes/StateManager";
 import {MessageData} from "./Chat/ChatArea";
 import {ServerEvent} from "../../Classes/Events/ServerEvent";
@@ -15,6 +15,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {PagesEnum} from "../../index";
 import {RequestImageEvent} from "../../Classes/Events/RequestImageEvent";
 import {ReceiveImageEvent} from "../../Classes/Events/ReceiveImageEvent";
+import {DrawMenu} from "./Drawer/DrawMenu";
 
 export function RoomPage() {
     const _canvas: React.RefObject<DrawCanvas> = React.createRef();
@@ -25,25 +26,27 @@ export function RoomPage() {
     const [wordsToChoose, setWordsToChoose] = useState<string[] | null>(null);
     const [word, setWord] = useState<string | null>(null)
     const [isDrawer, setIsDrawer] = useState<boolean>(false)
+    const [paintingSettings, setPaintingSettings] = useState<PaintingSettings>({size: 5, color: 'black'})
 
     const params = useParams();
 
     //connect to game
     useEffect(() => {
-        console.log("useeffect: " + params.roomId)
-        if (StateManager.getRoom() == null) {
-            console.log(params)
-            const roomIdString = params.roomId;
-            if (roomIdString === undefined) {
-                throw new Error("roomId not defined");
-            }
+        const roomIdString = params.roomId;
+        if (roomIdString === undefined) {
+            throw new Error("roomId not defined");
+        }
+        const roomId = Number.parseInt(roomIdString);
+        if (Number.isNaN(roomId)) {
+            throw new Error("roomId not defined");
+        }
 
-            const roomId = Number.parseInt(roomIdString);
-            if (Number.isNaN(roomId)) {
-                throw new Error("roomId not defined");
-            }
-
+        const room = StateManager.getRoom();
+        if (room == null) {
             StateManager.trySetRoom(roomId);//TODO: обработку что коннект не получился
+        } else if (room.getRoomId() !== roomId) {
+            room.leave();
+            StateManager.trySetRoom(roomId);
         }
     });
 
@@ -65,7 +68,7 @@ export function RoomPage() {
 
         } else if (event instanceof DrawEvent) {
 
-            _canvas.current?.drawLine(event.startPoint, event.finishPoint);
+            _canvas.current?.drawLine(event.startPoint, event.finishPoint, {color: event.color, size: event.size});
 
         } else if (event instanceof ChooseWordEvent) {
 
@@ -104,15 +107,19 @@ export function RoomPage() {
         return room.sendMessage(message);
     }
 
-    const clientNewDraw = (startPoint: Point, finishPoint: Point) => {
-        StateManager.getRoom()?.drawLine(startPoint, finishPoint);
+    const clientNewDraw = (startPoint: Point, finishPoint: Point, settings: PaintingSettings) => {
+        StateManager.getRoom()?.drawLine(startPoint, finishPoint, settings);
+    }
+
+    const clientClear = () => {
+        StateManager.getRoom()?.drawClear();
     }
 
     const navigate = useNavigate();
 
     return (
         <div className='vertical'>
-            <Button style={{width: 'fit-content', alignSelf: 'center'}} onClick={e => {
+            <Button style={{width: 'fit-content', alignSelf: 'center'}} onClick={_ => {
                 let room = StateManager.getRoom();
                 if (room === null) {
                     console.assert("onClickLeave: room === null")
@@ -134,10 +141,19 @@ export function RoomPage() {
                                       words={wordsToChoose}
                                       onClose={(index: number, word: string) => chooseWord(index, word)}
                     />
-                    <DrawCanvas ref={_canvas}
-                                canUserPaint={isDrawer && word !== null}
-                                drawSubscriber={(startPoint: Point, finishPoint: Point) =>
-                                    clientNewDraw(startPoint, finishPoint)}/>
+                    <div className='vertical'>
+                        <DrawCanvas ref={_canvas}
+                                    paintingSettings={paintingSettings}
+                                    canUserPaint={isDrawer && word !== null}
+                                    drawSubscriber={(startPoint: Point, finishPoint: Point, settings: PaintingSettings) =>
+                                        clientNewDraw(startPoint, finishPoint, settings)}
+                                    clearSubscriber={() => clientClear()}
+                        />
+                        <DrawMenu
+                            onClear={() => _canvas.current?.clear()}
+                            onChangeSettings={(settings) => setPaintingSettings(settings)}
+                        />
+                    </div>
                     <Chat ref={_chat}
                           canType={!isDrawer}
                           messages={messages}

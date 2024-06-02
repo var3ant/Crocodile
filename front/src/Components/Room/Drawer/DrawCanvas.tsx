@@ -5,26 +5,35 @@ import {Point} from "../../../Classes/Events/DrawEvent";
 const width = 600
 const height = 600
 
+export interface PaintingSettings {
+    color: string,
+    size: number
+}
+
 export class DrawCanvas extends React.Component<{
     canUserPaint: boolean,
-    drawSubscriber: (startPoint: Point, finishPoint: Point) => void
+    drawSubscriber: (startPoint: Point, finishPoint: Point, settings: PaintingSettings) => void,
+    clearSubscriber: () => void,
+    paintingSettings: PaintingSettings
 }, {}> {
     private readonly _canvasRef: React.RefObject<any>;
-    private _isPainting: boolean
-    private _ctx: any
-    private _startPoint: Point | null = null
-    private readonly drawSubscriber: (startPoint: Point, finishPoint: Point) => void;
-    private t: number = 0;
+    private _isPainting: boolean;
+    private _ctx: any;
+    private _startPoint: Point | null = null;
 
     constructor(props: any) {
         super(props);
         this._isPainting = false
         this._canvasRef = React.createRef();
-        this.drawSubscriber = props.drawSubscriber;
         // console.log("ctr can paint: " + this.props.canUserPaint)
     }
 
     public clear() {
+        this.internalClear();
+        this.props.clearSubscriber();
+    }
+
+    private internalClear() {
         this._ctx.strokeStyle = '#ffffff';
         this._ctx.clearRect(0, 0, this._canvasRef.current.width, this._canvasRef.current.height);
     }
@@ -44,13 +53,13 @@ export class DrawCanvas extends React.Component<{
 
     }
 
-    public drawLine(startPoint: Point, finishPoint: Point) {
+    public drawLine(startPoint: Point, finishPoint: Point, paintingSettings: PaintingSettings) {
         let ctx = this._ctx;
 
         ctx.beginPath(); // begin
-        ctx.lineWidth = 5;
+        ctx.lineWidth = paintingSettings.size;
         ctx.lineCap = 'round';
-        ctx.strokeStyle = '#c0392b';
+        ctx.strokeStyle = paintingSettings.color;
         ctx.moveTo(startPoint.x, startPoint.y); // from
         ctx.lineTo(finishPoint.x, finishPoint.y); // to
         ctx.stroke(); // draw it!
@@ -58,7 +67,7 @@ export class DrawCanvas extends React.Component<{
 
     componentDidMount() {
         this._ctx = this._canvasRef.current.getContext('2d');
-        this.clear()
+        this.internalClear();
     }
 
     render() {
@@ -105,8 +114,8 @@ export class DrawCanvas extends React.Component<{
         }
 
         let newPoint = this.calculatePosition(e);
-        this.drawSubscriber(this._startPoint, newPoint);
-        this.drawLine(this._startPoint, newPoint);
+        this.props.drawSubscriber(this._startPoint, newPoint, this.props.paintingSettings);
+        this.drawLine(this._startPoint, newPoint, this.props.paintingSettings);
         this.setPosition(newPoint);
     }
 

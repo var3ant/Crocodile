@@ -7,7 +7,6 @@ import RoomPage from "./Components/Room/RoomPage";
 import {BrowserPage} from "./Components/Browser/BrowserPage";
 import {LoginPage} from "./Components/Login/LoginPage";
 import {RegisterPage} from "./Components/Login/RegisterPage";
-import {ProtectedRoute} from "./Classes/Route/ProtectedRoute";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -80,6 +79,7 @@ root.render(
         <RouterProvider router={router}/>
         {/*<App />*/}
     </React.StrictMode>
+    // <Canvas></Canvas>
 );
 
 // If you want to start measuring performance in your app, pass a function

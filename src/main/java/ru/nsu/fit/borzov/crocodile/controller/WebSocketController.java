@@ -64,6 +64,12 @@ public class WebSocketController {
         }
     }
 
+    @MessageMapping("/clear/")
+    public void joinRoom(Principal principal) throws UserNotFoundException, UserNotInRoomException {
+            var userId = principalUtils.getUserId(principal);
+            roomService.clear(userId);
+    }
+
     @MessageMapping("/disconnect")
     public void disconnectRoom(Principal principal) {
         var userId = principalUtils.getUserId(principal);

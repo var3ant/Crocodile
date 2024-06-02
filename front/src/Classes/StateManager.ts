@@ -14,7 +14,7 @@ export class StateManager {
             return false;
         }
 
-        StateManager.room = new RoomModel(userId, roomId.toString());//TODO: сделать чтобы нормально число хранилось
+        StateManager.room = new RoomModel(userId, roomId);
         return true;//TODO: обработка ошибок
     }
 

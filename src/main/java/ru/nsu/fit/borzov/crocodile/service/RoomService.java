@@ -242,4 +242,13 @@ public class RoomService {
 
         messageSenderService.sendToUser(new ImageMessage(image), receiver);
     }
+
+    public void clear(long userId) throws UserNotFoundException, UserNotInRoomException {
+        var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        var room = user.getRoom();
+        if (room == null) {
+            throw new UserNotInRoomException();
+        }
+        messageSenderService.sendToRoom(new ClearMessage(), room);
+    }
 }

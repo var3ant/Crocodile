@@ -7,6 +7,6 @@ public enum ServerMessageType {
     CHOOSE_WORD_MESSAGE,
     INFO_MESSAGE,
     IMAGE_MESSAGE,
-
+    CLEAR_MESSAGE,
     GET_IMAGE_MESSAGE
 }

@@ -6,12 +6,6 @@ import lombok.Data;
 public class DrawRequest {
     private Point startPoint;
     private Point finishPoint;
-
-    public DrawRequest() {
-    }
-
-    public DrawRequest(Point startPoint, Point finishPoint) {
-        this.startPoint = startPoint;
-        this.finishPoint = finishPoint;
-    }
+    private int size;
+    private String color;
 }

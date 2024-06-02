@@ -31,6 +31,11 @@ html {
     flex-direction: column;
 }
 
+.horizontal {
+    display: flex;
+    flex-direction: row;
+}
+
 .grid_container {
     display: flex;
     flex-direction: row;

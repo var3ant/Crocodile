@@ -2,7 +2,6 @@ import SockJS from "sockjs-client"
 import Stomp, {Frame} from "stompjs"
 import Cookies from 'universal-cookie';
 import {RoomModel} from "./RoomModel";
-import {MessageData} from "../Components/Room/Chat/ChatArea";
 import {ServerEvent} from "./Events/ServerEvent";
 import {ChooseWordEvent} from "./Events/ChooseWordEvent";
 import {NewDrawerEvent} from "./Events/NewDrawerEvent";
@@ -12,15 +11,17 @@ import {DrawEvent, Point} from "./Events/DrawEvent";
 import {AxiosService} from "./Http/AxiosService";
 import {RequestImageEvent} from "./Events/RequestImageEvent";
 import {ReceiveImageEvent} from "./Events/ReceiveImageEvent";
+import {PaintingSettings} from "../Components/Room/Drawer/DrawCanvas";
+import ClearEvent from "./Events/ClearEvent";
 
 class RoomConnection {
     private readonly _userId: number;
     private readonly _cookies: Cookies
-    private _roomId: string | null = null;
+    private _roomId: number | null = null;
     private _roomModel: RoomModel;
 
     //
-    constructor(roomModel: RoomModel, userId: number, roomId: string) {
+    constructor(roomModel: RoomModel, userId: number, roomId: number) {
         this._roomModel = roomModel;
         this._userId = userId;
         this._roomId = roomId;
@@ -57,7 +58,9 @@ class RoomConnection {
             case "DRAW_MESSAGE": {
                 let startPoint: Point = body["startPoint"];
                 let finishPoint: Point = body["finishPoint"];
-                return new DrawEvent(startPoint, finishPoint);
+                let color: string = body["color"];
+                let size: number = body["size"];
+                return new DrawEvent(startPoint, finishPoint, color, size);
             }
 
             case "IMAGE_MESSAGE": {
@@ -68,6 +71,10 @@ class RoomConnection {
             case "GET_IMAGE_MESSAGE": {
                 let receiverId: number = body["receiverId"];
                 return new RequestImageEvent(receiverId);
+            }
+
+            case "CLEAR_MESSAGE": {
+                return new ClearEvent();
             }
 
             default:
@@ -114,8 +121,12 @@ class RoomConnection {
     }
 
     private joinRoom() {
+        let roomId = this._roomId;
+        if(roomId === null) {
+            throw new Error("roomId is null")
+        }
         console.log("subscribe topic after connect")
-        this.subscribe("/topic/session/" + this._roomId, (m) => {
+        this.subscribe("/topic/session/" + roomId, (m) => {
             this._roomModel.handleEvent(this.parseServerMessage(JSON.parse(m.body)));
         });
 
@@ -144,8 +155,8 @@ class RoomConnection {
         this.sendMessage("/chat", {message: text});
     }
 
-    public draw(startPoint: Point, finishPoint: Point) {
-        this.sendMessage("/draw", {startPoint: startPoint, finishPoint: finishPoint});
+    public draw(startPoint: Point, finishPoint: Point, paintingSettings: PaintingSettings) {
+        this.sendMessage("/draw", {startPoint: startPoint, finishPoint: finishPoint, size: paintingSettings.size, color: paintingSettings.color});
     }
 
     public chooseWord(index: number) {
@@ -153,6 +164,9 @@ class RoomConnection {
     }
 
     //endregion
+    drawClear() {
+        this.sendMessage("/clear", {});
+    }
 }
 
 export default RoomConnection;

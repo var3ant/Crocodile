@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 import ru.nsu.fit.borzov.crocodile.exception.AuthenticationException;
 import ru.nsu.fit.borzov.crocodile.service.JwtTokenUtil;
 import ru.nsu.fit.borzov.crocodile.service.UserService;
@@ -62,6 +63,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             }
 
         });
+    }
+
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+        registration.setMessageSizeLimit(200000); // default : 64 * 1024
+        registration.setSendTimeLimit(20 * 10000); // default : 10 * 10000
+        registration.setSendBufferSizeLimit(3 * 512 * 1024); // default : 512 * 1024
+
     }
 
     private Authentication getAuthenticationByAccessor(StompHeaderAccessor accessor) throws AuthenticationException {
