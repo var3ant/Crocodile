@@ -8,7 +8,7 @@ import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.LoginResponse;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.LoginRequest;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.RegisterRequest;
 import ru.nsu.fit.borzov.crocodile.exception.AlreadyExistException;
-import ru.nsu.fit.borzov.crocodile.exception.IlligalNameException;
+import ru.nsu.fit.borzov.crocodile.exception.IllegalNameException;
 import ru.nsu.fit.borzov.crocodile.exception.InvalidUserAuthDataException;
 import ru.nsu.fit.borzov.crocodile.exception.UserNotFoundException;
 import ru.nsu.fit.borzov.crocodile.mapper.UserMapper;
@@ -28,7 +28,7 @@ public class UserService {
 
     private final JwtTokenUtil jwtTokenUtil;
 
-    public long register(RegisterRequest registerRequest) throws AlreadyExistException, IlligalNameException {
+    public long register(RegisterRequest registerRequest) throws AlreadyExistException, IllegalNameException {
 
         var isExists = userRepository.existsByName(registerRequest.getLogin());
 
@@ -37,7 +37,7 @@ public class UserService {
         }
 
         if (StringUtils.equalsAnyIgnoreCase(registerRequest.getLogin(), reservedNames)) {
-            throw new IlligalNameException();
+            throw new IllegalNameException();
         }
 
         var password = passwordEncoder.encode(CharBuffer.wrap(registerRequest.getPassword()));

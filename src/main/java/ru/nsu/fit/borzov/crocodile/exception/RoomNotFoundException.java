@@ -1,4 +1,9 @@
 package ru.nsu.fit.borzov.crocodile.exception;
 
-public class RoomNotFoundException extends Exception {
+import org.springframework.http.HttpStatus;
+
+public class RoomNotFoundException extends HttpException {
+    public RoomNotFoundException() {
+        super(HttpStatus.NOT_FOUND, ExceptionMessage.ROOM_NOT_FOUND_MESSAGE);
+    }
 }

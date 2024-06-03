@@ -1,4 +1,9 @@
 package ru.nsu.fit.borzov.crocodile.exception;
 
-public class UserNotFoundException extends Exception {
+import org.springframework.http.HttpStatus;
+
+public class UserNotFoundException extends HttpException {
+    public UserNotFoundException() {
+        super(HttpStatus.NOT_FOUND, ExceptionMessage.USER_NOT_FOUND_MESSAGE);
+    }
 }

@@ -2,7 +2,7 @@ import {StateManager} from "./StateManager";
 import {AxiosService} from "./Http/AxiosService";
 
 export class ServerRequests {
-    public static async login(name: string, password: string): Promise<number | null> {
+    public static async login(name: string, password: string): Promise<number> {
         AxiosService.setAuthToken(null)
 
         let result: { data: { token: string, id: number } } = await StateManager.axios.request('POST', '/auth/login', {
@@ -17,7 +17,7 @@ export class ServerRequests {
         return result.data.id;
     }
 
-    public static async register(name: string, password: string): Promise<number | null> {
+    public static async register(name: string, password: string): Promise<number> {
         AxiosService.setAuthToken(null)
 
         let result: { data: { id: number } } = await StateManager.axios.request('POST', '/auth/register', {

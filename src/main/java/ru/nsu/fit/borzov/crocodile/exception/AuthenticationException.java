@@ -1,4 +1,9 @@
 package ru.nsu.fit.borzov.crocodile.exception;
 
-public class AuthenticationException extends Exception {
+import org.springframework.http.HttpStatus;
+
+public class AuthenticationException extends HttpException {
+    public AuthenticationException() {
+        super(HttpStatus.CONFLICT, ExceptionMessage.BAD_AUTHENTICATOR_MESSAGE);
+    }
 }

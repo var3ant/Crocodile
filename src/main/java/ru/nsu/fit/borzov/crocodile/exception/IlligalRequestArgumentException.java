@@ -1,7 +1,9 @@
 package ru.nsu.fit.borzov.crocodile.exception;
 
-public class IlligalRequestArgumentException extends Exception {
+import org.springframework.http.HttpStatus;
+
+public class IlligalRequestArgumentException extends HttpException {
     public IlligalRequestArgumentException(String message) {
-        super(message);
+        super(HttpStatus.BAD_REQUEST, ExceptionMessage.ILLEGAL_ARGUMENT_EXCEPTION,  message);
     }
 }

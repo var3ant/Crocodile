@@ -1,4 +1,9 @@
 package ru.nsu.fit.borzov.crocodile.exception;
 
-public class InvalidUserAuthDataException extends Exception {
+import org.springframework.http.HttpStatus;
+
+public class InvalidUserAuthDataException extends HttpException {
+    public InvalidUserAuthDataException() {
+        super(HttpStatus.BAD_REQUEST, ExceptionMessage.INVALID_USER_AUTH_DATA_MESSAGE);
+    }
 }

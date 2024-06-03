@@ -1,4 +1,9 @@
 package ru.nsu.fit.borzov.crocodile.exception;
 
-public class AlreadyExistException extends Exception {
+import org.springframework.http.HttpStatus;
+
+public class AlreadyExistException extends HttpException {
+    public AlreadyExistException() {
+        super(HttpStatus.CONFLICT, ExceptionMessage.ALREADY_EXIST_MESSAGE);
+    }
 }
