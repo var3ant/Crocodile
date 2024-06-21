@@ -3,7 +3,6 @@ import {DislikeTwoTone, LikeTwoTone} from "@ant-design/icons";
 import {gray, green, red} from "@ant-design/colors";
 import {ReactionType} from "../../../Classes/Events/UserMessageEvent";
 import {StateManager} from "../../../Classes/StateManager";
-import retryTimes = jest.retryTimes;
 
 interface colorStyle {
     color: string

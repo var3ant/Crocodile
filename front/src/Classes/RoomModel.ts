@@ -17,11 +17,14 @@ class RoomModel {
     constructor(userId: number, roomId: number) {
         this.Messages = [];
         this._roomConnection = new RoomConnection(this, userId, roomId);
-        this._roomConnection.connect()
+
         this.userId = userId;
-        console.log(roomId)
         this.name = roomId.toString();//TODO: имя а не id
         this.roomId = roomId;
+    }
+
+    public connect(): boolean {
+        return this._roomConnection.connect();
     }
 
     public getRoomId(): number {

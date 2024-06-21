@@ -60,7 +60,7 @@ export function FriendsComponent() {
                                        }
                                        console.log(friendView.roomName);
                                        if (!StateManager.trySetRoom(roomId)) {
-                                           //TODO: обработка ошибки подключения
+                                           navigate(PagesEnum.FRIENDS);
                                        } else {
                                            navigate(PagesEnum.ROOM + roomId);
                                        }

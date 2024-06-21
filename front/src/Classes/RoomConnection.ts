@@ -11,7 +11,6 @@ import {DrawEvent, Point} from "./Events/DrawEvent";
 import {AxiosService} from "./Http/AxiosService";
 import {RequestImageEvent} from "./Events/RequestImageEvent";
 import {ReceiveImageEvent} from "./Events/ReceiveImageEvent";
-import {PaintingSettings} from "../Components/Room/Drawer/DrawCanvas";
 import ClearEvent from "./Events/ClearEvent";
 import {ReactionEvent} from "./Events/ReactionEvent";
 
@@ -31,7 +30,6 @@ class RoomConnection {
 
     private _client: Stomp.Client | null = null
 
-    //region parse messages
     private parseServerMessage(body: any): ServerEvent {
         let messageType: string = body["type"];
         switch (messageType) {
@@ -92,25 +90,23 @@ class RoomConnection {
         }
     }
 
-    //endregion
-
-    //region websocket wrapper
-
-    public connect(): void {
+    public connect(): boolean {
         if (this._client !== null) {
             //TODO:
             console.log("client not null")
-            return;
+            new Error("Already connected")
         }
+
         // this._cookies.set("userId", this._userId, {path: '/'})
         let sockJS = new SockJS("http://localhost:8080/game");
         this._client = Stomp.over(sockJS);
         // console.log("before connect")
         // onConnected: (frame?: Frame | undefined) => any, onError?: ((error: string | Frame) => any) | undefined
-        console.log("token: " + AxiosService.getAuthToken())
-        this._client.connect({Authorization: `Bearer ${AxiosService.getAuthToken()}`}, () => {
+        console.log("token: " + AxiosService.getAuthToken());
+        return this._client.connect({Authorization: `Bearer ${AxiosService.getAuthToken()}`}, () => {
             this.joinRoom()
-        }, (error: string | Frame) => console.log("connect error:" + error));
+            return true;
+        }, (e: any) => false);
     }
 
     private subscribe(topic: string, onMessageReceived: ((message: Stomp.Message) => any)) {
@@ -121,10 +117,6 @@ class RoomConnection {
 
         this._client.subscribe(topic, onMessageReceived);
     }
-
-    // public subscribeEvents(eventHandler: (event: ServerEvent) => void) {
-    //     this._eventSubscriber = eventHandler;
-    // }
 
     public sendMessage(topic: string, message: any) {
         if (this._client === null) {
@@ -152,7 +144,6 @@ class RoomConnection {
         this.sendMessage("/join/" + this._roomId, {})
     }
 
-    //endregion
     public disconnect() {
         this._roomId = null;
     }

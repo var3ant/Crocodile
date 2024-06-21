@@ -10,10 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import ru.nsu.fit.borzov.crocodile.controller.util.PrincipalUtils;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.*;
-import ru.nsu.fit.borzov.crocodile.exception.IlligalRequestArgumentException;
-import ru.nsu.fit.borzov.crocodile.exception.UserNotFoundException;
-import ru.nsu.fit.borzov.crocodile.exception.UserNotInRoomException;
-import ru.nsu.fit.borzov.crocodile.exception.WrongGameRoleException;
+import ru.nsu.fit.borzov.crocodile.exception.*;
 import ru.nsu.fit.borzov.crocodile.service.RoomService;
 
 import java.security.Principal;
@@ -27,37 +24,37 @@ public class WebSocketController {
     private final Logger logger = LoggerFactory.getLogger(WebSocketController.class);
 
     @MessageMapping("/chat")
-    public void chat(ChatRequest message, Principal principal) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException {
+    public void chat(ChatRequest message, Principal principal) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException, AuthenticationException {
         var userId = principalUtils.getUserId(principal);
         roomService.sendChatMessage(message, userId);
     }
 
     @MessageMapping("/react_to_message")
-    public void chat(ReactionRequest reactionRequest, Principal principal) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException {
+    public void chat(ReactionRequest reactionRequest, Principal principal) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException, AuthenticationException {
         var userId = principalUtils.getUserId(principal);
         roomService.react(reactionRequest.getMessageId(), reactionRequest.getReaction(), userId);
     }
 
     @MessageMapping("/choose_word")
-    public void chooseWord(ChooseWordRequest chooseWordRequest, Principal principal) throws UserNotFoundException, UserNotInRoomException, WrongGameRoleException, IlligalRequestArgumentException {
+    public void chooseWord(ChooseWordRequest chooseWordRequest, Principal principal) throws UserNotFoundException, UserNotInRoomException, WrongGameRoleException, IlligalRequestArgumentException, AuthenticationException {
         var userId = principalUtils.getUserId(principal);
         roomService.chooseWord(userId, Integer.parseInt(chooseWordRequest.getIndex()));
     }
 
     @MessageMapping("/draw")
-    public void draw(DrawRequest draw, Principal principal) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException {
+    public void draw(DrawRequest draw, Principal principal) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException, AuthenticationException {
         var userId = principalUtils.getUserId(principal);
         roomService.sendDrawMessage(draw, userId);
     }
 
     @MessageMapping("/send_image")
-    public void sendImage(DrawerImageRequest drawerImage, Principal principal) throws UserNotFoundException, UserNotInRoomException {
+    public void sendImage(DrawerImageRequest drawerImage, Principal principal) throws UserNotFoundException, UserNotInRoomException, AuthenticationException {
         var userId = principalUtils.getUserId(principal);
         roomService.sendImage(userId, drawerImage.getImage(), drawerImage.getReceiverId());
     }
 
     @MessageMapping("/join/{roomId}")
-    public void joinRoom(@DestinationVariable String roomId, Principal principal) throws UserNotFoundException {
+    public void joinRoom(@DestinationVariable String roomId, Principal principal) throws UserNotFoundException, AuthenticationException {
         try {
             var userId = principalUtils.getUserId(principal);
             var roomIdInt = Long.parseLong(roomId);
@@ -68,13 +65,13 @@ public class WebSocketController {
     }
 
     @MessageMapping("/clear/")
-    public void joinRoom(Principal principal) throws UserNotFoundException, UserNotInRoomException {
+    public void joinRoom(Principal principal) throws UserNotFoundException, UserNotInRoomException, AuthenticationException {
             var userId = principalUtils.getUserId(principal);
             roomService.clear(userId);
     }
 
     @MessageMapping("/disconnect")
-    public void disconnectRoom(Principal principal) {
+    public void disconnectRoom(Principal principal) throws AuthenticationException {
         var userId = principalUtils.getUserId(principal);
 
         try {
@@ -85,7 +82,7 @@ public class WebSocketController {
     }
 
     @EventListener
-    private void handleSessionDisconnect(SessionDisconnectEvent event) {
+    private void handleSessionDisconnect(SessionDisconnectEvent event) throws AuthenticationException {
         var user = event.getUser();
         var userId = principalUtils.getUserId(user);
 

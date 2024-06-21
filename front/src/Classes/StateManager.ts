@@ -15,7 +15,8 @@ export class StateManager {
         }
 
         StateManager.room = new RoomModel(userId, roomId);
-        return true;//TODO: обработка ошибок
+        
+        return StateManager.room.connect();
     }
 
     static getRoom(): RoomModel | null {

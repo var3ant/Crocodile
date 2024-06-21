@@ -42,12 +42,15 @@ export function RoomPage() {
             throw new Error("roomId not defined");
         }
 
-        const room = StateManager.getRoom();
-        if (room == null) {
-            StateManager.trySetRoom(roomId);//TODO: обработку что коннект не получился
-        } else if (room.getRoomId() !== roomId) {
+        let room = StateManager.getRoom();
+        if (room != null && room.getRoomId() !== roomId) {
             room.disconnect();
-            StateManager.trySetRoom(roomId);
+            room = null;
+        }
+
+        if (room == null && !StateManager.trySetRoom(roomId)) {
+            navigate(PagesEnum.ROOM_LIST)
+            return;
         }
     });
 
@@ -76,6 +79,8 @@ export function RoomPage() {
             let isDrawer = event.userId === StateManager.getRoom()?.userId;
             setMessages([...messages, new MessageData(-1, "", "New drawer", event.userId.toString())])//TODO:username а не id
             setIsDrawer(isDrawer)
+            console.log("Drawer id: " + event.userId)
+            console.log("My id: " + StateManager.getRoom()?.userId)
             _canvas.current?.clear();
 
         } else if (event instanceof DrawEvent) {

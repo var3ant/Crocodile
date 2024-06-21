@@ -121,6 +121,7 @@ public class RoomService {
 
             if (users.isEmpty()) {
                 room = roomRepository.save(room);
+                user = userRepository.save(user);
                 roomRepository.delete(room);
             }
             messageSenderService.sendToRoom(new InfoMessage(user.getName() + " has been disconnected"), room);
