@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Flex} from "antd";
+import {Card} from "antd";
 import {HttpFriendApi} from "../../Classes/Http/HttpFriendApi";
-import {CloseOutlined} from '@ant-design/icons';
-import {red} from "@ant-design/colors";
 import {UserNameResponse} from "../../Classes/Http/Response/UserNameResponse";
 import CloseButton from "../../Classes/Http/Response/Button/CloseButton";
 

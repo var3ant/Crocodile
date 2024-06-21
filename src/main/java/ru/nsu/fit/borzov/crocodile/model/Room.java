@@ -34,19 +34,17 @@ public class Room {
     @JsonIgnore
     private String word;
 
-    @JsonIgnore
-    private String password;//TODONOW: да, пароль строкой, и что ты мне сделаешь? У меня пользователи пока без пароля.
-
-    @Column(nullable = false)
-    private boolean hidden;
+//    @JsonIgnore
+//    private String password;
+//
+//    @Column(nullable = false)
+//    private boolean hidden;
 
     public Room() {
 
     }
 
-    public Room(String name, String password, boolean hidden) {
+    public Room(String name) {
         this.name = name;
-        this.password = password;
-        this.hidden = hidden;
     }
 }

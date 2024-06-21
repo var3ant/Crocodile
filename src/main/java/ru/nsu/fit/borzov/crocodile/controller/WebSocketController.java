@@ -9,10 +9,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import ru.nsu.fit.borzov.crocodile.controller.util.PrincipalUtils;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.ChatRequest;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.ChooseWordRequest;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.DrawRequest;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.DrawerImageRequest;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.*;
 import ru.nsu.fit.borzov.crocodile.exception.IlligalRequestArgumentException;
 import ru.nsu.fit.borzov.crocodile.exception.UserNotFoundException;
 import ru.nsu.fit.borzov.crocodile.exception.UserNotInRoomException;
@@ -33,6 +30,12 @@ public class WebSocketController {
     public void chat(ChatRequest message, Principal principal) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException {
         var userId = principalUtils.getUserId(principal);
         roomService.sendChatMessage(message, userId);
+    }
+
+    @MessageMapping("/react_to_message")
+    public void chat(ReactionRequest reactionRequest, Principal principal) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException {
+        var userId = principalUtils.getUserId(principal);
+        roomService.react(reactionRequest.getMessageId(), reactionRequest.getReaction(), userId);
     }
 
     @MessageMapping("/choose_word")

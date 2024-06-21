@@ -6,9 +6,11 @@ import {StateManager} from "../../Classes/StateManager";
 import {PagesEnum} from "../../index";
 import {useNavigate} from "react-router-dom";
 import "../Style/Room.css";
+import CreateRoomModal from "./CreateRoomModal";
 
 export function RoomBrowser() {
     const [rows, setRows] = useState<RoomView[]>([])
+    const [isCreateRoomOpen, setCreateRoomOpen] = useState<boolean>(false)
     const navigate = useNavigate()
 
     const columns: TableProps<RoomView>['columns'] = [
@@ -48,9 +50,16 @@ export function RoomBrowser() {
                        };
                    }}
             />
-            <Button onClick={_ => {
-                update();
-            }}>Update list</Button>
+            <div style={{display: 'flex', flexDirection: 'row-reverse'}}>
+                <Button style={{margin: '4px 4px 4px 2px'}} onClick={_ =>
+                    setCreateRoomOpen(true)
+                }>Create room</Button>
+                <Button style={{margin: '4px 4px 4px 2px'}} onClick={_ =>
+                    update()
+                }>Update list</Button>
+            </div>
+            <CreateRoomModal isOpen={isCreateRoomOpen}
+                             setOpen={(value: boolean) => setCreateRoomOpen(value)}/>
         </Flex>
     );
 }

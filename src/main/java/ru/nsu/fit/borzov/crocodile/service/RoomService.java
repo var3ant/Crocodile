@@ -17,6 +17,7 @@ import ru.nsu.fit.borzov.crocodile.repository.GuessingPhraseRepository;
 import ru.nsu.fit.borzov.crocodile.repository.RoomRepository;
 import ru.nsu.fit.borzov.crocodile.repository.UserRepository;
 
+import javax.validation.constraints.NotNull;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +80,7 @@ public class RoomService {
             setDrawer(room, user);
         }
 
-        messageSenderService.sendToRoom(new ChatMessage(message.getMessage(), user.getId()), room);
+        messageSenderService.sendToRoom(new ChatMessage(user.getId(), user.getName(), message.getMessage()), room);
     }
 
     public void sendDrawMessage(DrawRequest draw, long userId) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException {
@@ -212,12 +213,12 @@ public class RoomService {
         return roomOpt.get();
     }
 
-    public long create(String name, String password, boolean isHidden) throws AlreadyExistException {
+    public long create(String name) throws AlreadyExistException {
         if (roomRepository.existsByName(name)) {
             throw new AlreadyExistException();
         }
 
-        var room = roomRepository.save(new Room(name, password, isHidden));
+        var room = roomRepository.save(new Room(name));
         logger.info("New room: {}", name);
 
         return room.getId();
@@ -250,5 +251,19 @@ public class RoomService {
             throw new UserNotInRoomException();
         }
         messageSenderService.sendToRoom(new ClearMessage(), room);
+    }
+
+    public void react(@NotNull String messageId, @NotNull ReactionType reaction, long userId) throws UserNotInRoomException, UserNotFoundException, WrongGameRoleException {
+        var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        var room = user.getRoom();
+        if (room == null) {
+            throw new UserNotInRoomException();
+        }
+
+        if (room.getDrawer() != null && room.getDrawer().getId() != userId) {
+            throw new WrongGameRoleException();
+        }
+
+        messageSenderService.sendToRoom(new ReactionMessage(messageId, reaction),room);
     }
 }

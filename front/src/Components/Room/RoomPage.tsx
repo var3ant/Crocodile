@@ -16,6 +16,7 @@ import {PagesEnum} from "../../index";
 import {RequestImageEvent} from "../../Classes/Events/RequestImageEvent";
 import {ReceiveImageEvent} from "../../Classes/Events/ReceiveImageEvent";
 import {DrawMenu} from "./Drawer/DrawMenu";
+import {ReactionEvent} from "../../Classes/Events/ReactionEvent";
 
 export function RoomPage() {
     const _canvas: React.RefObject<DrawCanvas> = React.createRef();
@@ -45,7 +46,7 @@ export function RoomPage() {
         if (room == null) {
             StateManager.trySetRoom(roomId);//TODO: обработку что коннект не получился
         } else if (room.getRoomId() !== roomId) {
-            room.leave();
+            room.disconnect();
             StateManager.trySetRoom(roomId);
         }
     });
@@ -53,16 +54,27 @@ export function RoomPage() {
     const eventHandler = (event: ServerEvent) => {
         if (event instanceof UserMessageEvent) {
 
-            setMessages([...messages, new MessageData(event.userId, event.userId.toString(), event.text)])
+            setMessages([...messages, event.toMessageData()]);
 
         } else if (event instanceof InfoMessageEvent) {
 
-            setMessages([...messages, new MessageData(-1, "Info", event.text, false)])
+            setMessages([...messages, new MessageData(-1, "", "Info", event.text)])
+
+        } else if (event instanceof ReactionEvent) {
+
+            let message = messages.find(m => m.messageId === event.messageId)
+            if (message == undefined) {
+                console.warn("ReactionEvent: message by messageId not found")
+            } else {
+                console.log("message: " + message.text + "; reaction: " + event.reaction)
+                message.reaction = event.reaction;
+                setMessages([...messages])
+            }
 
         } else if (event instanceof NewDrawerEvent) {
 
             let isDrawer = event.userId === StateManager.getRoom()?.userId;
-            setMessages([...messages, new MessageData(-1, "New drawer", event.userId.toString(), false)])
+            setMessages([...messages, new MessageData(-1, "", "New drawer", event.userId.toString())])//TODO:username а не id
             setIsDrawer(isDrawer)
             _canvas.current?.clear();
 
@@ -93,7 +105,7 @@ export function RoomPage() {
     const chooseWord = (index: number, word: string) => {
         setWordsToChoose([])
         setWord(word)
-        StateManager.getRoom()?.wordChosen(index)
+        StateManager.getRoom()?.chooseWord(index)
         // console.log("word: " + word)
     }
 
@@ -104,7 +116,7 @@ export function RoomPage() {
             return false;
         }
 
-        return room.sendMessage(message);
+        return room.sendChatMessage(message);
     }
 
     const clientNewDraw = (startPoint: Point, finishPoint: Point, settings: PaintingSettings) => {
@@ -125,7 +137,7 @@ export function RoomPage() {
                     console.assert("onClickLeave: room === null")
                     return;
                 }
-                room.leave();
+                room.disconnect();
                 navigate(PagesEnum.ROOM_LIST);
             }}>Leave</Button>
             <h1 style={{alignSelf: 'center'}}>Room: {params.roomId}</h1>
@@ -155,7 +167,7 @@ export function RoomPage() {
                         />
                     </div>
                     <Chat ref={_chat}
-                          canType={!isDrawer}
+                          isDrawer={isDrawer}
                           messages={messages}
                           sendNewMessage={(message: string) => clientNewMessage(message)}
                     />

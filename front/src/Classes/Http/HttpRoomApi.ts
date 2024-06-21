@@ -1,6 +1,6 @@
 import RoomView from "./Response/RoomView";
-import {CreateRoomData} from "../../Components/Browser/CreateRoomForm";
 import {StateManager} from "../StateManager";
+import CreateRoomData from "./Request/CreateRoomData";
 
 export class HttpRoomApi {
     private static readonly path: string = '/room'

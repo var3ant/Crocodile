@@ -19,7 +19,7 @@ public class RoomController {
 
     @PostMapping("/create")
     public long createRoom(@RequestBody CreateRoomHttpRequest createRoomRequest) throws AlreadyExistException {
-        return roomService.create(createRoomRequest.getName(), createRoomRequest.getPassword(), createRoomRequest.isHidden());
+        return roomService.create(createRoomRequest.getName());
     }
 
     @GetMapping("by_id/{id}")

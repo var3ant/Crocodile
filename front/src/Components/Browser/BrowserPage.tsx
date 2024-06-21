@@ -1,13 +1,14 @@
 import React from "react";
 import {Button, Col, Row} from "antd";
 import {RoomBrowser} from "./RoomBrowser";
-import {CreateRoomForm} from "./CreateRoomForm";
 import {useNavigate} from "react-router-dom";
 import {PagesEnum} from "../../index";
 import {AxiosService} from "../../Classes/Http/AxiosService";
+import CreateRoomModal from "./CreateRoomModal";
 
 export function BrowserPage() {
     const navigate = useNavigate();
+
 
     return (
         <div className='vertical'>
@@ -22,11 +23,8 @@ export function BrowserPage() {
                 <h1 style={{alignSelf: 'center'}}>Browser</h1>
                 <div className='outer_frame'>
                     <div className='grid_container'>
-                        <div style={{flex: 3}}>
+                        <div className='vertical'>
                             <RoomBrowser/>
-                        </div>
-                        <div style={{flex: 1, alignSelf:'stretch', justifySelf:'stretch'}}>
-                            <CreateRoomForm/>
                         </div>
                     </div>
                 </div>

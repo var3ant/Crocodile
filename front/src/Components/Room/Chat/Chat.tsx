@@ -6,7 +6,7 @@ import SendMessageLine from "./SendMessageLine";
 type ChatProps = {
     messages: MessageData[],
     sendNewMessage: (message: string) => boolean,
-    canType: boolean
+    isDrawer: boolean
 };
 
 class Chat extends React.Component<ChatProps, {}> {
@@ -20,8 +20,8 @@ class Chat extends React.Component<ChatProps, {}> {
     render() {
         return (
             <Space direction="vertical">
-                <ChatArea Messages={this.props.messages}/>
-                <SendMessageLine canType={this.props.canType} onClick={text => this.props.sendNewMessage(text)}/>
+                <ChatArea Messages={this.props.messages} isDrawer={this.props.isDrawer}/>
+                <SendMessageLine canType={!this.props.isDrawer} onClick={text => this.props.sendNewMessage(text)}/>
             </Space>
         );
     }

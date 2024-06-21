@@ -8,5 +8,6 @@ public enum ServerMessageType {
     INFO_MESSAGE,
     IMAGE_MESSAGE,
     CLEAR_MESSAGE,
-    GET_IMAGE_MESSAGE
+    GET_IMAGE_MESSAGE,
+    REACTION_MESSAGE
 }

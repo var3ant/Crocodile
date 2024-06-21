@@ -2,7 +2,7 @@ import {useNavigate} from "react-router-dom";
 import {FriendsComponent} from "./FriendsComponent";
 import ReceivedFriendRequestComponent from "./ReceivedFriendRequestComponent";
 import SentFriendRequestComponent from "./SentFriendRequestComponent";
-import SearchUserComponent from "./SearchUserComponent";
+import SearchUserModal from "./SearchUserModal";
 import {Button} from "antd";
 import React, {useState} from "react";
 import {UserNameResponse} from "../../Classes/Http/Response/UserNameResponse";
@@ -38,8 +38,8 @@ export function FriendsPage() {
                                     <ReceivedFriendRequestComponent/>
                                     <SentFriendRequestComponent/>
                                 </div>
-                                <SearchUserComponent isOpen={isSearchOpen}
-                                                     setOpen={(value: boolean) => setSearchOpen(value)}/>
+                                <SearchUserModal isOpen={isSearchOpen}
+                                                 setOpen={(value: boolean) => setSearchOpen(value)}/>
                             </div>
                         </div>
                     </div>

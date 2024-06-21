@@ -6,13 +6,14 @@ import {ServerEvent} from "./Events/ServerEvent";
 import {ChooseWordEvent} from "./Events/ChooseWordEvent";
 import {NewDrawerEvent} from "./Events/NewDrawerEvent";
 import {InfoMessageEvent} from "./Events/InfoMessageEvent";
-import {UserMessageEvent} from "./Events/UserMessageEvent";
+import {ReactionType, stringToReaction, UserMessageEvent} from "./Events/UserMessageEvent";
 import {DrawEvent, Point} from "./Events/DrawEvent";
 import {AxiosService} from "./Http/AxiosService";
 import {RequestImageEvent} from "./Events/RequestImageEvent";
 import {ReceiveImageEvent} from "./Events/ReceiveImageEvent";
 import {PaintingSettings} from "../Components/Room/Drawer/DrawCanvas";
 import ClearEvent from "./Events/ClearEvent";
+import {ReactionEvent} from "./Events/ReactionEvent";
 
 class RoomConnection {
     private readonly _userId: number;
@@ -51,8 +52,17 @@ class RoomConnection {
 
             case "CHAT_MESSAGE": {
                 let userId: number = body["userId"];
+                let userName: string = body["userName"];
                 let text: string = body["text"];
-                return new UserMessageEvent(userId, text)
+                let reaction: ReactionType = stringToReaction(body["reaction"]);
+                let messageId: string = body["messageId"];
+                return new UserMessageEvent(userId, messageId, userName, text, reaction)
+            }
+
+            case "REACTION_MESSAGE": {
+                let messageId: string = body["messageId"];
+                let reaction: ReactionType = stringToReaction(body["reaction"]);
+                return new ReactionEvent(messageId, reaction)
             }
 
             case "DRAW_MESSAGE": {
@@ -112,7 +122,11 @@ class RoomConnection {
         this._client.subscribe(topic, onMessageReceived);
     }
 
-    private sendMessage(topic: string, message: any) {
+    // public subscribeEvents(eventHandler: (event: ServerEvent) => void) {
+    //     this._eventSubscriber = eventHandler;
+    // }
+
+    public sendMessage(topic: string, message: any) {
         if (this._client === null) {
             //TODO:
             return;
@@ -122,7 +136,7 @@ class RoomConnection {
 
     private joinRoom() {
         let roomId = this._roomId;
-        if(roomId === null) {
+        if (roomId === null) {
             throw new Error("roomId is null")
         }
         console.log("subscribe topic after connect")
@@ -139,33 +153,8 @@ class RoomConnection {
     }
 
     //endregion
-
-    //region client messages
-
     public disconnect() {
-        this.sendMessage("/disconnect", {})
         this._roomId = null;
-    }
-
-    public sendImage(receiverId: number, image: string) {
-        this.sendMessage("/send_image", {receiverId: receiverId, image: image});
-    }
-
-    public chat(text: string) {
-        this.sendMessage("/chat", {message: text});
-    }
-
-    public draw(startPoint: Point, finishPoint: Point, paintingSettings: PaintingSettings) {
-        this.sendMessage("/draw", {startPoint: startPoint, finishPoint: finishPoint, size: paintingSettings.size, color: paintingSettings.color});
-    }
-
-    public chooseWord(index: number) {
-        this.sendMessage("/choose_word", {index: index.toString()});
-    }
-
-    //endregion
-    drawClear() {
-        this.sendMessage("/clear", {});
     }
 }
 

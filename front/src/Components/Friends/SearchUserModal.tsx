@@ -9,7 +9,7 @@ import {UserOutlined} from "@ant-design/icons";
 
 const {Search} = Input;
 
-export default function SearchUserComponent(props: Readonly<{ isOpen: boolean, setOpen: (val: boolean) => void }>) {
+export default function SearchUserModal(props: Readonly<{ isOpen: boolean, setOpen: (val: boolean) => void }>) {
     const [users, setUsers] = useState<PotentialFriendView[]>([])
     const [name, setName] = useState<string>("")
     const update = () => {
@@ -65,5 +65,3 @@ export default function SearchUserComponent(props: Readonly<{ isOpen: boolean, s
         </div>
     );
 }
-
-//TODO: onClick вставить запрос.
