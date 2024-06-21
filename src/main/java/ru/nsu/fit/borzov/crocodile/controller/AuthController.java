@@ -21,11 +21,6 @@ import java.util.List;
 public class AuthController {
     private final UserService userService;
 
-    @PostMapping("/clear")
-    public void clear() {
-        userService.clearDb();
-    }
-
     @PostMapping("/register")
     public long register(@RequestBody RegisterRequest registerRequest) throws AlreadyExistException, IllegalNameException {
         return userService.register(registerRequest);
@@ -36,13 +31,13 @@ public class AuthController {
         return userService.login(loginRequest);
     }
 
-    @ExceptionHandler({AlreadyExistException.class})
-    public ResponseEntity<String> handleException() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exist");
-    }
-
     @GetMapping
     public List<Long> getUsers() {
         return userService.getUsers();
+    }
+
+    @GetMapping("/ping")
+    public String pingString(@RequestParam String name) {
+        return name;
     }
 }

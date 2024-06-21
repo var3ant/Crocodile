@@ -1,5 +1,6 @@
 import {StateManager} from "./StateManager";
 import {AxiosService} from "./Http/AxiosService";
+import {HttpFriendApi} from "./Http/HttpFriendApi";
 
 export class ServerRequests {
     public static async login(name: string, password: string): Promise<number> {

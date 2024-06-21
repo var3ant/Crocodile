@@ -4,6 +4,7 @@ import {HttpRoomApi} from "../../Classes/Http/HttpRoomApi";
 import {StateManager} from "../../Classes/StateManager";
 import {PagesEnum} from "../../index";
 import {useNavigate} from "react-router-dom";
+import {RoomBrowser} from "./RoomBrowser";
 
 export interface CreateRoomData {
     name: string,
@@ -23,54 +24,48 @@ export function CreateRoomForm(
         return {name: name, password: password, maxPlayers: maxPlayers};
     }
 
-    const rowStyle = {width: "100%", justifyContent: 'center'}
+    const rowStyle = {padding: '5px 0px', alignContent: 'center'}
+    const labelStyle = {width: '80px'}
+    const inputStyle = {width: '250px'}
 
     return (
-        <Card>
-            <Row style={rowStyle}>
-                <Col span={5}>
-                    <label>Name:</label>
-                </Col>
-                <Col span={5}>
-                    <Input
+        <Card style={{width: '100%', height: '100%', alignContent: 'center', justifyContent: 'center'}}>
+            <div className='vertical' style={{width:'70%'}}>
+                <div className='horizontal' style={rowStyle}>
+                    <label style={labelStyle}>Name:</label>
+                    <Input style={inputStyle}
                         value={name}
                         onChange={e => setName(e.target.value)}
                     />
-                </Col>
-            </Row>
-            <Row style={rowStyle}>
-                <Col span={5}>
-                    <label>Password:</label>
-                </Col>
-                <Col span={5}>
-                    <Input
+                </div>
+                <div className='horizontal' style={rowStyle}>
+                    <label style={labelStyle}>Password:</label>
+                    <Input style={inputStyle}
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                     />
-                </Col>
-            </Row>
-            <Row style={rowStyle}>
-                <Col span={5}>
-                    <label>Max players:</label>
-                </Col>
-                <Col span={5}>
-                    <InputNumber
+                </div>
+                <div className='horizontal' style={rowStyle}>
+                    <label style={labelStyle}>Max players:</label>
+                    <InputNumber style={inputStyle}
                         value={maxPlayers}
                         onChange={e => setMaxPlayers(e ?? 0)}
                     />
-                </Col>
-            </Row>
-                <Button
-                    type="primary" onClick={e => {
-                    let roomData = createRoomData();
-                    console.log(roomData)
-                    HttpRoomApi.createRoom(roomData).then(roomId => {
-                        StateManager.trySetRoom(roomId);
-                        navigate(PagesEnum.ROOM + roomId);
-                    })
-                }}>
-                    Create
-                </Button>
+                </div>
+                <div className='horizontal' style={{width: "100%", justifyContent: 'center'}}>
+                    <Button
+                        type="primary" onClick={e => {
+                        let roomData = createRoomData();
+                        console.log(roomData)
+                        HttpRoomApi.createRoom(roomData).then(roomId => {
+                            StateManager.trySetRoom(roomId);
+                            navigate(PagesEnum.ROOM + roomId);
+                        })
+                    }}>
+                        Create
+                    </Button>
+                </div>
+            </div>
         </Card>
     );
 }

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.nsu.fit.borzov.crocodile.exception.ExceptionMessage;
 import ru.nsu.fit.borzov.crocodile.exception.HttpException;
 import ru.nsu.fit.borzov.crocodile.exception.InternalServerErrorException;
-import ru.nsu.fit.borzov.crocodile.exception.InvalidUserAuthDataException;
 
 @ControllerAdvice
 public class ExceptionResolver {

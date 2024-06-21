@@ -44,10 +44,6 @@ public class UserService {
         return userRepository.save(new User(registerRequest.getLogin(), password)).getId();
     }
 
-    public void clearDb() {
-        userRepository.deleteAll();
-    }
-
     public List<Long> getUsers() {
         return userRepository.findAll().stream().map(User::getId).toList();
     }

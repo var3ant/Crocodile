@@ -20,7 +20,7 @@ export class AxiosService {
         }
     }
 
-    public request(method: string, url: string, data: any): Promise<any> {
+    public request(method: string, url: string, data: any = null): Promise<any> {
         let headers: any = {};
 
         if (AxiosService.getAuthToken() !== null) {
@@ -31,7 +31,7 @@ export class AxiosService {
             method: method,
             url: url,
             data: data,
-            headers: headers
+            headers: headers,
         });
     }
 }

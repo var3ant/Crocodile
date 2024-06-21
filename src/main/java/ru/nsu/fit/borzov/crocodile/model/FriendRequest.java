@@ -1,12 +1,14 @@
 package ru.nsu.fit.borzov.crocodile.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 public class FriendRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -14,13 +16,13 @@ public class FriendRequest {
     private long id;
 
     @ManyToOne
-    private User requestFrom;
+    private User from;
 
     @ManyToOne
-    private User requestTo;
+    private User to;
 
     public FriendRequest(User from, User to) {
-        this.requestFrom = from;
-        this.requestTo = to;
+        this.from = from;
+        this.to = to;
     }
 }

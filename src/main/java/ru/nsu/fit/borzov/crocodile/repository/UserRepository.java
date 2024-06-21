@@ -1,6 +1,8 @@
 package ru.nsu.fit.borzov.crocodile.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.nsu.fit.borzov.crocodile.model.Room;
 import ru.nsu.fit.borzov.crocodile.model.User;
@@ -17,4 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByName(String name);
 
     List<User> findAllByRoom(Room room);
+
+    @Query("select u from user_data u where u.name like CONCAT(:username,'%') order by length(u.name)")
+    List<User> findAllByNameStartingWith(String username, Pageable pageable);
 }

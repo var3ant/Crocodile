@@ -7,6 +7,7 @@ import RoomPage from "./Components/Room/RoomPage";
 import {BrowserPage} from "./Components/Browser/BrowserPage";
 import {LoginPage} from "./Components/Login/LoginPage";
 import {RegisterPage} from "./Components/Login/RegisterPage";
+import {FriendsPage} from "./Components/Friends/FriendsPage";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -16,8 +17,44 @@ export const PagesEnum = {
     Register: '/register',
     LOGIN: '/login',
     ROOM: '/room/',
-    ROOM_LIST: '/room_list'
+    ROOM_LIST: '/room_list',
+    FRIENDS: '/friends',
 };
+
+const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <RegisterPage/>
+    },
+    {
+        path: PagesEnum.Register,
+        element: <RegisterPage/>
+    },
+    {
+        path: PagesEnum.LOGIN,
+        element: <LoginPage/>
+    },
+    {
+        path: PagesEnum.ROOM + ":roomId",
+        element: <RoomPage/>
+    },
+    {
+        path: PagesEnum.ROOM_LIST,
+        element: <BrowserPage/>
+    },    {
+        path: PagesEnum.FRIENDS,
+        element: <FriendsPage/>
+    },
+]);
+
+root.render(
+    <React.StrictMode>
+        <RouterProvider router={router}/>
+        {/*<App />*/}
+    </React.StrictMode>
+    // <Canvas></Canvas>
+);
+
 
 // const router = createBrowserRouter([
 //     {
@@ -51,36 +88,6 @@ export const PagesEnum = {
 //     },
 // ]);
 
-const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <RegisterPage/>
-    },
-    {
-        path: PagesEnum.Register,
-        element: <RegisterPage/>
-    },
-    {
-        path: PagesEnum.LOGIN,
-        element: <LoginPage/>
-    },
-    {
-        path: PagesEnum.ROOM + ":roomId",
-        element: <RoomPage/>
-    },
-    {
-        path: PagesEnum.ROOM_LIST,
-        element: <BrowserPage/>
-    },
-]);
-
-root.render(
-    <React.StrictMode>
-        <RouterProvider router={router}/>
-        {/*<App />*/}
-    </React.StrictMode>
-    // <Canvas></Canvas>
-);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

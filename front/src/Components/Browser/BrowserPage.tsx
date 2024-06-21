@@ -25,7 +25,7 @@ export function BrowserPage() {
                         <div style={{flex: 3}}>
                             <RoomBrowser/>
                         </div>
-                        <div style={{flex: 1}}>
+                        <div style={{flex: 1, alignSelf:'stretch', justifySelf:'stretch'}}>
                             <CreateRoomForm/>
                         </div>
                     </div>

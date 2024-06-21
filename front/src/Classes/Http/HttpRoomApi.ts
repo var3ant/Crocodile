@@ -1,4 +1,4 @@
-import {RoomView} from "./Response/RoomView";
+import RoomView from "./Response/RoomView";
 import {CreateRoomData} from "../../Components/Browser/CreateRoomForm";
 import {StateManager} from "../StateManager";
 

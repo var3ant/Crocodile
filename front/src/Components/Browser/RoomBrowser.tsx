@@ -1,20 +1,13 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Flex, Table, TableProps} from "antd";
 import {HttpRoomApi} from "../../Classes/Http/HttpRoomApi";
-import {RoomView} from "../../Classes/Http/Response/RoomView";
+import RoomView from "../../Classes/Http/Response/RoomView";
 import {StateManager} from "../../Classes/StateManager";
 import {PagesEnum} from "../../index";
 import {useNavigate} from "react-router-dom";
 import "../Style/Room.css";
 
-export function RoomBrowser(
-    // onSubmit: (roomView: RoomView) => void
-) {
-    // constructor(props: any) {
-    //     super(props);
-    //     this.state = {rows: []};
-    //     this.updateRooms();
-    // }
+export function RoomBrowser() {
     const [rows, setRows] = useState<RoomView[]>([])
     const navigate = useNavigate()
 
@@ -32,13 +25,14 @@ export function RoomBrowser(
         }
     ];
 
-
-    const updateRooms = () => {
-        HttpRoomApi.getRooms().then(rows => {
-            setRows(rows)
-            console.log(rows)
-        });
+    async function update() {
+        let rows = await HttpRoomApi.getRooms();
+        setRows(rows);
     }
+
+    useEffect(() => {
+        update()
+    }, [])
 
     return (
         <Flex gap="middle" justify="left" vertical>
@@ -50,12 +44,12 @@ export function RoomBrowser(
                                console.log(roomView.id + roomView.name);
                                StateManager.trySetRoom(roomView.id);
                                navigate(PagesEnum.ROOM + roomView.id);
-                           }, // click row
+                           },
                        };
                    }}
             />
-            <Button onClick={e => {
-                updateRooms();
+            <Button onClick={_ => {
+                update();
             }}>Update list</Button>
         </Flex>
     );

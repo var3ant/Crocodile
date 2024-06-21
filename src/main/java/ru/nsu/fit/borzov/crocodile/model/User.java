@@ -8,11 +8,9 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.FriendResponse;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity(name = "user_data")
 @Getter
@@ -87,17 +85,16 @@ public class User implements UserDetails {
         return true;
     }
 
-//    @JsonIgnore
-//    @ManyToMany(mappedBy = "following", cascade = CascadeType.ALL)
-//    @JoinTable(name="user_relationship",
-//            joinColumns={@JoinColumn(name="parent_id")},
-//            inverseJoinColumns={@JoinColumn(name="user_id")})
-//    private Set<User> followers = new HashSet<>();
-//
-//    @JsonIgnore
-//    @ManyToMany(mappedBy = "followers", cascade = CascadeType.ALL)
-//    @JoinTable(name="user_relationship",
-//            joinColumns={@JoinColumn(name="user_id")},
-//            inverseJoinColumns={@JoinColumn(name="parent_id")})
-//    private Set<User> following = new HashSet<>();
+    @ManyToMany
+    @JoinTable(name = "user_data__friends",
+            joinColumns =@JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id"
+            ))
+    private Set<User> friends = new HashSet<>();
+
+    @OneToMany(mappedBy = "to")
+    private Set<FriendRequest> incomingRequest = new HashSet<>();
+
+    @OneToMany(mappedBy = "from")
+    private Set<FriendRequest> outcomingRequest = new HashSet<>();
 }

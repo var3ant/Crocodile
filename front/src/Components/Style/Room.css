@@ -29,11 +29,15 @@ html {
 .vertical {
     display: flex;
     flex-direction: column;
+    align-content: stretch;
+    justify-content: stretch;
+    flex: 1;
 }
 
 .horizontal {
     display: flex;
     flex-direction: row;
+    flex: 1;
 }
 
 .grid_container {

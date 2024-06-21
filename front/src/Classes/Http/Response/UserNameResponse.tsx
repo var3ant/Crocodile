@@ -1,4 +1,4 @@
-export default class RoomView {
+export class UserNameResponse {
     public id: number;
     public name: string;
 
