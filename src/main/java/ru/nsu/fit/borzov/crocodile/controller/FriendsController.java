@@ -9,6 +9,7 @@ import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.FriendResponse
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.NameUserResponse;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.PotentialFriendResponse;
 import ru.nsu.fit.borzov.crocodile.exception.AuthenticationException;
+import ru.nsu.fit.borzov.crocodile.exception.IllegalUserException;
 import ru.nsu.fit.borzov.crocodile.exception.UserNotFoundException;
 import ru.nsu.fit.borzov.crocodile.mapper.UserMapper;
 import ru.nsu.fit.borzov.crocodile.service.FriendService;
@@ -42,7 +43,7 @@ public class FriendsController {
     }
 
     @PostMapping("/send_request/{anotherUserId}")
-    public void sendFriendRequest(@PathVariable Long anotherUserId, Principal principal) throws UserNotFoundException, AuthenticationException {
+    public void sendFriendRequest(@PathVariable Long anotherUserId, Principal principal) throws UserNotFoundException, AuthenticationException, IllegalUserException {
         var userId = principalUtils.getUserId(principal);
 
         friendService.sendFriendRequest(userId, anotherUserId);

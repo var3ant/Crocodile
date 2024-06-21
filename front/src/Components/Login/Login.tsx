@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Button, Card, Input, Space} from "antd";
+import {Button, Card, Input} from "antd";
 
 export type onClickFunc = (login: string, password: string) => void;
 

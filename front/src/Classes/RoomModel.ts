@@ -36,7 +36,6 @@ class RoomModel {
     }
 
     public handleEvent(event: ServerEvent) {
-        console.log("message received:" + event)
         if (this._eventSubscriber) {
             this._eventSubscriber(event);
         }

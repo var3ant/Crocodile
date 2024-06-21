@@ -12,11 +12,14 @@ import {NewDrawerEvent} from "../../Classes/Events/NewDrawerEvent";
 import {DrawEvent, Point} from "../../Classes/Events/DrawEvent";
 import {ChooseWordEvent} from "../../Classes/Events/ChooseWordEvent";
 import {useNavigate, useParams} from "react-router-dom";
-import {PagesEnum} from "../../index";
 import {RequestImageEvent} from "../../Classes/Events/RequestImageEvent";
 import {ReceiveImageEvent} from "../../Classes/Events/ReceiveImageEvent";
 import {DrawMenu} from "./Drawer/DrawMenu";
 import {ReactionEvent} from "../../Classes/Events/ReactionEvent";
+import ClearEvent from "../../Classes/Events/ClearEvent";
+import ConnectionErrorEvent from "../../Classes/Events/Errors/ConnectionErrorEvent";
+import {PagesEnum} from "../../PagesEnum";
+import {globalErrorEvent} from "../ErrorModal/GlobalModalError";
 
 export function RoomPage() {
     const _canvas: React.RefObject<DrawCanvas> = React.createRef();
@@ -25,7 +28,7 @@ export function RoomPage() {
 
     const [messages, setMessages] = useState<MessageData[]>([]);
     const [wordsToChoose, setWordsToChoose] = useState<string[] | null>(null);
-    const [word, setWord] = useState<string | null>(null)
+    const [word, setWord] = useState<string | null>("")
     const [isDrawer, setIsDrawer] = useState<boolean>(false)
     const [paintingSettings, setPaintingSettings] = useState<PaintingSettings>({size: 5, color: 'black'})
 
@@ -49,7 +52,7 @@ export function RoomPage() {
         }
 
         if (room == null && !StateManager.trySetRoom(roomId)) {
-            navigate(PagesEnum.ROOM_LIST)
+            globalErrorEvent({redirectPath: PagesEnum.ROOM_LIST, message: 'Room not found'})
             return;
         }
     });
@@ -100,6 +103,14 @@ export function RoomPage() {
 
             _canvas.current?.setImage(event.image);
 
+        } else if (event instanceof ClearEvent) {
+
+            _canvas.current?.clear();
+
+        } else if (event instanceof ConnectionErrorEvent) {
+
+            globalErrorEvent({redirectPath: PagesEnum.ROOM_LIST, message: 'Room not found'})
+
         }
     }
 
@@ -129,10 +140,14 @@ export function RoomPage() {
     }
 
     const clientClear = () => {
-        StateManager.getRoom()?.drawClear();
+        if (isDrawer) {
+            StateManager.getRoom()?.drawClear();
+        }
     }
 
     const navigate = useNavigate();
+
+    const messageWhatToDo = isDrawer ? "Draw: " + word : "Guess the word"
 
     return (
         <div className='vertical'>
@@ -151,31 +166,35 @@ export function RoomPage() {
                     width: "100%",
                     height: "100%",
                     display: "flex",
-                    alignItems: "center",
                     justifyContent: "center"
                 }}>
-                    <ChooseWordDialog ref={_chooseWordDialog}
-                                      words={wordsToChoose}
-                                      onClose={(index: number, word: string) => chooseWord(index, word)}
-                    />
-                    <div className='vertical'>
-                        <DrawCanvas ref={_canvas}
-                                    paintingSettings={paintingSettings}
-                                    canUserPaint={isDrawer && word !== null}
-                                    drawSubscriber={(startPoint: Point, finishPoint: Point, settings: PaintingSettings) =>
-                                        clientNewDraw(startPoint, finishPoint, settings)}
-                                    clearSubscriber={() => clientClear()}
+                    <div className='horizontal' style={{gap: '10px'}}>
+                        <ChooseWordDialog ref={_chooseWordDialog}
+                                          words={wordsToChoose}
+                                          onClose={(index: number, word: string) => chooseWord(index, word)}
                         />
-                        <DrawMenu
-                            onClear={() => _canvas.current?.clear()}
-                            onChangeSettings={(settings) => setPaintingSettings(settings)}
-                        />
+                        <div className='vertical'>
+                            <DrawCanvas ref={_canvas}
+                                        paintingSettings={paintingSettings}
+                                        canUserPaint={isDrawer && word !== null}
+                                        drawSubscriber={(startPoint: Point, finishPoint: Point, settings: PaintingSettings) =>
+                                            clientNewDraw(startPoint, finishPoint, settings)}
+                                        clearSubscriber={() => clientClear()}
+                            />
+                            <DrawMenu
+                                onClear={() => _canvas.current?.clear()}
+                                onChangeSettings={(settings) => setPaintingSettings(settings)}
+                            />
+                        </div>
+                        <div className='vertical'>
+                            <h3 style={{marginBottom: '10px', marginLeft: '10px'}}>{messageWhatToDo}</h3>
+                            <Chat ref={_chat}
+                                  isDrawer={isDrawer}
+                                  messages={messages}
+                                  sendNewMessage={(message: string) => clientNewMessage(message)}
+                            />
+                        </div>
                     </div>
-                    <Chat ref={_chat}
-                          isDrawer={isDrawer}
-                          messages={messages}
-                          sendNewMessage={(message: string) => clientNewMessage(message)}
-                    />
                 </Space>
             </Flex>
         </div>

@@ -1,5 +1,5 @@
 import SockJS from "sockjs-client"
-import Stomp, {Frame} from "stompjs"
+import Stomp from "stompjs"
 import Cookies from 'universal-cookie';
 import {RoomModel} from "./RoomModel";
 import {ServerEvent} from "./Events/ServerEvent";
@@ -13,6 +13,7 @@ import {RequestImageEvent} from "./Events/RequestImageEvent";
 import {ReceiveImageEvent} from "./Events/ReceiveImageEvent";
 import ClearEvent from "./Events/ClearEvent";
 import {ReactionEvent} from "./Events/ReactionEvent";
+import ConnectionErrorEvent from "./Events/Errors/ConnectionErrorEvent";
 
 class RoomConnection {
     private readonly _userId: number;
@@ -83,6 +84,10 @@ class RoomConnection {
 
             case "CLEAR_MESSAGE": {
                 return new ClearEvent();
+            }
+
+            case "CONNECTION_ERROR_MESSAGE": {
+                return new ConnectionErrorEvent();
             }
 
             default:

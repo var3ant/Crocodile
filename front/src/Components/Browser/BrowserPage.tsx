@@ -1,10 +1,9 @@
 import React from "react";
-import {Button, Col, Row} from "antd";
+import {Button} from "antd";
 import {RoomBrowser} from "./RoomBrowser";
 import {useNavigate} from "react-router-dom";
-import {PagesEnum} from "../../index";
 import {AxiosService} from "../../Classes/Http/AxiosService";
-import CreateRoomModal from "./CreateRoomModal";
+import {PagesEnum} from "../../PagesEnum";
 
 export function BrowserPage() {
     const navigate = useNavigate();

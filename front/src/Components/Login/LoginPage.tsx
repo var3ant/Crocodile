@@ -1,11 +1,11 @@
 import React, {useState} from "react";
 import {Button, Space} from "antd";
 import {Login} from "./Login";
-import {ServerRequests} from "../../Classes/ServerRequests";
 import {StateManager} from "../../Classes/StateManager";
 import {useNavigate} from "react-router-dom";
-import {PagesEnum} from "../../index";
 import {Errors, errorToString} from "../../Classes/ErrorMessages";
+import {PagesEnum} from "../../PagesEnum";
+import {ServerRequests} from "../../Classes/ServerRequests";
 
 function LoginPage() {
     const [errorMessage, setErrorMessage] = useState("");
@@ -17,7 +17,6 @@ function LoginPage() {
     }
 
     const errorFunc = (e: any) => {
-        //TODO: это конечно фигня что надо сравнивать через особый метод. Надо разобраться как в js хранить енам чтобы работало как строки
         let errorType = e?.response?.data;
         if(errorType == null) {
             setErrorMessage("Unknown error")
@@ -42,7 +41,8 @@ function LoginPage() {
                 onClick={(login, password) =>
                     ServerRequests.login(login, password)
                         .then(loginFunc)
-                        .catch(errorFunc)}
+                        .catch(errorFunc)
+            }
             />
             <b style={{color:'red'}}>{errorMessage}</b>
         </Space>

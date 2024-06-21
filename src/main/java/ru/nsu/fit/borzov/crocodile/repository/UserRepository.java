@@ -20,6 +20,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findAllByRoom(Room room);
 
-    @Query("select u from user_data u where u.name like CONCAT(:username,'%') order by length(u.name)")
-    List<User> findAllByNameStartingWith(String username, Pageable pageable);
+    @Query("select u from user_data u where u.name like CONCAT(:username,'%') and u.id != :actorId order by length(u.name)")
+    List<User> findAllPotentialFriendsByNameStartingWith(long actorId, String username, Pageable pageable);
 }

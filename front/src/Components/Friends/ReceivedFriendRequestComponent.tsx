@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Flex} from "antd";
+import {Card} from "antd";
 import {HttpFriendApi} from "../../Classes/Http/HttpFriendApi";
-import {CheckOutlined, CloseOutlined} from '@ant-design/icons';
-import {green, red} from "@ant-design/colors";
 import {UserNameResponse} from "../../Classes/Http/Response/UserNameResponse";
 import YesNoFriendRow from "./YesNoFriendRow";
 
@@ -30,7 +28,7 @@ export default function ReceivedFriendRequestComponent() {
                 <Card style={{minHeight: '200px'}}>
                     {requests.map((follower) => {
                         return (
-                            <YesNoFriendRow user={follower}
+                            <YesNoFriendRow key={follower.id} user={follower}
                                             onYesClick={() => HttpFriendApi.sendRequest(follower.id).then(update)}
                                             onNoClick={() => HttpFriendApi.declineRequest(follower.id).then(update)}
                             />);

@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import ru.nsu.fit.borzov.crocodile.config.AfterStartupActions;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.NameUserResponse;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.PotentialFriendResponse;
+import ru.nsu.fit.borzov.crocodile.exception.IllegalUserException;
 import ru.nsu.fit.borzov.crocodile.exception.UserNotFoundException;
 import ru.nsu.fit.borzov.crocodile.mapper.UserMapper;
 import ru.nsu.fit.borzov.crocodile.model.FriendRequest;
@@ -28,11 +28,15 @@ public class FriendService {
     private final Logger logger = getLogger(FriendService.class);
 
 
-    public void sendFriendRequest(Long userId, Long anotherUserId) throws UserNotFoundException {
+    public void sendFriendRequest(Long userId, Long anotherUserId) throws UserNotFoundException, IllegalUserException {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         User anotherUser = userRepository.findById(anotherUserId)
                 .orElseThrow(UserNotFoundException::new);
+
+        if(user.getId() == anotherUser.getId()) {
+            throw new IllegalUserException();
+        }
 
         var inverseRequest = friendRequestRepository.findFirstByFromAndTo(anotherUser, user);
         if (inverseRequest.isPresent()) {
@@ -116,8 +120,8 @@ public class FriendService {
                 .orElseThrow(UserNotFoundException::new);
 
         logger.info("Search for user with name like: {}", name);
-        var users = userRepository.findAllByNameStartingWith(name, PageRequest.of(0, 10));
-        return users.stream().map((potentialFriend) -> toPotentialFriend(user, potentialFriend)).toList();
+        var users = userRepository.findAllPotentialFriendsByNameStartingWith(user.getId(), name, PageRequest.of(0, 10));
+        return users.stream().map(potentialFriend -> toPotentialFriend(user, potentialFriend)).toList();
     }
 
     private PotentialFriendResponse toPotentialFriend(User user, User potentialFriend) {

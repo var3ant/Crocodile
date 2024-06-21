@@ -14,7 +14,7 @@ class MessageData {
 }
 
 
-const ContainerHeight = 600;
+const ContainerHeight = 582;
 const ContainerWidth = 350;
 
 class ChatArea extends React.Component<{ Messages: MessageData[], isDrawer: boolean }> {
@@ -30,7 +30,6 @@ class ChatArea extends React.Component<{ Messages: MessageData[], isDrawer: bool
             }}>
                 <List locale={{emptyText: ' '}}
                       dataSource={this.props.Messages}
-                    //   dataSource={[new MessageData(1, "name1", "asdasdasd", true)]}
                       renderItem={(item: MessageData) => (
                           <List.Item key={item.id}>
                               <div style={{width: "100%", display: 'flex', flexDirection: 'row'}}>

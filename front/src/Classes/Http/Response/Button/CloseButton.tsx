@@ -1,5 +1,5 @@
 import {CloseOutlined} from "@ant-design/icons";
-import {green, red} from "@ant-design/colors";
+import {red} from "@ant-design/colors";
 import {Button} from "antd";
 import React from "react";
 

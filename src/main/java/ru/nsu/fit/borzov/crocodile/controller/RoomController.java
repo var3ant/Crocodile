@@ -8,7 +8,6 @@ import ru.nsu.fit.borzov.crocodile.exception.RoomNotFoundException;
 import ru.nsu.fit.borzov.crocodile.model.Room;
 import ru.nsu.fit.borzov.crocodile.service.RoomService;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController

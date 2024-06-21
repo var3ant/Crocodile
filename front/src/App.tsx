@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.css';
-import RoomPage from "./Components/Room/RoomPage";
 
 class App extends React.Component<{}, { isGameFound: boolean }> {
     constructor(props: any) {

@@ -5,10 +5,8 @@ import SentFriendRequestComponent from "./SentFriendRequestComponent";
 import SearchUserModal from "./SearchUserModal";
 import {Button} from "antd";
 import React, {useState} from "react";
-import {UserNameResponse} from "../../Classes/Http/Response/UserNameResponse";
 
 export function FriendsPage() {
-    const navigate = useNavigate();
     const [isSearchOpen, setSearchOpen] = useState<boolean>(false)
 
     const onAddClick = () => {

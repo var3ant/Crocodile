@@ -34,12 +34,6 @@ public class Room {
     @JsonIgnore
     private String word;
 
-//    @JsonIgnore
-//    private String password;
-//
-//    @Column(nullable = false)
-//    private boolean hidden;
-
     public Room() {
 
     }

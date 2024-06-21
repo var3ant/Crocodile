@@ -6,7 +6,6 @@ import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.FriendResponse
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.LoginResponse;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.RegisterRequest;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.NameUserResponse;
-import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.PotentialFriendResponse;
 import ru.nsu.fit.borzov.crocodile.model.User;
 
 @Mapper(componentModel = "spring")

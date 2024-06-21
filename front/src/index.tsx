@@ -8,42 +8,44 @@ import {BrowserPage} from "./Components/Browser/BrowserPage";
 import {LoginPage} from "./Components/Login/LoginPage";
 import {RegisterPage} from "./Components/Login/RegisterPage";
 import {FriendsPage} from "./Components/Friends/FriendsPage";
+import GlobalModalError from "./Components/ErrorModal/GlobalModalError";
+import {PagesEnum} from "./PagesEnum";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 
-export const PagesEnum = {
-    Register: '/register',
-    LOGIN: '/login',
-    ROOM: '/room/',
-    ROOM_LIST: '/room_list',
-    FRIENDS: '/friends',
-};
+
+function errorModalPlus(element:  JSX.Element):  JSX.Element {
+    return (<div>
+        {element}
+        <GlobalModalError/>
+    </div>)
+}
 
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <RegisterPage/>
+        element: errorModalPlus(<RegisterPage/>)
     },
     {
         path: PagesEnum.Register,
-        element: <RegisterPage/>
+        element: errorModalPlus(<RegisterPage/>)
     },
     {
         path: PagesEnum.LOGIN,
-        element: <LoginPage/>
+        element: errorModalPlus(<LoginPage/>)
     },
     {
         path: PagesEnum.ROOM + ":roomId",
-        element: <RoomPage/>
+        element: errorModalPlus(<RoomPage/>)
     },
     {
         path: PagesEnum.ROOM_LIST,
-        element: <BrowserPage/>
+        element: errorModalPlus(<BrowserPage/>)
     },    {
         path: PagesEnum.FRIENDS,
-        element: <FriendsPage/>
+        element: errorModalPlus(<FriendsPage/>)
     },
 ]);
 

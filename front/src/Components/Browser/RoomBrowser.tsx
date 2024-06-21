@@ -3,10 +3,11 @@ import {Button, Flex, Table, TableProps} from "antd";
 import {HttpRoomApi} from "../../Classes/Http/HttpRoomApi";
 import RoomView from "../../Classes/Http/Response/RoomView";
 import {StateManager} from "../../Classes/StateManager";
-import {PagesEnum} from "../../index";
 import {useNavigate} from "react-router-dom";
 import "../Style/Room.css";
 import CreateRoomModal from "./CreateRoomModal";
+import {PagesEnum} from "../../PagesEnum";
+import {globalErrorEvent} from "../ErrorModal/GlobalModalError";
 
 export function RoomBrowser() {
     const [rows, setRows] = useState<RoomView[]>([])
@@ -44,8 +45,8 @@ export function RoomBrowser() {
                        return {
                            onClick: event => {
                                console.log(roomView.id + roomView.name);
-                               if(!StateManager.trySetRoom(roomView.id)) {
-                                   navigate(PagesEnum.ROOM_LIST)
+                               if (!StateManager.trySetRoom(roomView.id)) {
+                                   globalErrorEvent({redirectPath: PagesEnum.ROOM_LIST, message: 'Room not found'})
                                    return;
                                }
                                navigate(PagesEnum.ROOM + roomView.id);

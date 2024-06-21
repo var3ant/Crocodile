@@ -4,10 +4,6 @@ import {gray, green, red} from "@ant-design/colors";
 import {ReactionType} from "../../../Classes/Events/UserMessageEvent";
 import {StateManager} from "../../../Classes/StateManager";
 
-interface colorStyle {
-    color: string
-}
-
 const greenColor = {primary: green[5], secondary: green[4]};
 const redColor = {primary: red[5], secondary: red[4]};
 const grayColor = {primary: gray[1], secondary: gray[0]};

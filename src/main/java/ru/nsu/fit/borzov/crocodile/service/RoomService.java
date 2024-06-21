@@ -43,6 +43,7 @@ public class RoomService {
 
         var roomOptional = roomRepository.findById(roomId);
         if (roomOptional.isEmpty()) {
+            messageSenderService.sendToUser(new ConnectionError(roomId), user);
             return false;
         }
         var room = roomOptional.get();

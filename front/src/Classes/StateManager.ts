@@ -4,7 +4,7 @@ import {AxiosService} from "./Http/AxiosService";
 export class StateManager {
     private static room: RoomModel | null;
     public static userId: number | null;
-    public static axios: AxiosService = new AxiosService();
+    public static readonly axios: AxiosService = new AxiosService();
 
     static trySetRoom(roomId: number): boolean {
         console.log("set roomid:" + roomId)

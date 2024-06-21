@@ -2,9 +2,9 @@ import React, {useState} from "react";
 import {Input, Modal} from "antd";
 import {HttpRoomApi} from "../../Classes/Http/HttpRoomApi";
 import {StateManager} from "../../Classes/StateManager";
-import {PagesEnum} from "../../index";
 import {useNavigate} from "react-router-dom";
 import {Errors, errorToString} from "../../Classes/ErrorMessages";
+import {PagesEnum} from "../../PagesEnum";
 
 export default function CreateRoomModal(props: Readonly<{
     isOpen: boolean,

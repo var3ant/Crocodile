@@ -1,8 +1,8 @@
 import {useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 
-import {PagesEnum} from "../../index";
 import {useAuth} from "../AuthProvider";
+import {PagesEnum} from "../../PagesEnum";
 
 type ProtectedRouteProps = { children: JSX.Element | undefined };
 

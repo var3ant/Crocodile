@@ -2,9 +2,7 @@ package ru.nsu.fit.borzov.crocodile.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Data

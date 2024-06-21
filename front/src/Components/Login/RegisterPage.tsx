@@ -3,9 +3,8 @@ import {Button, Space} from "antd";
 import {Login} from "./Login";
 import {ServerRequests} from "../../Classes/ServerRequests";
 import {useNavigate} from "react-router-dom";
-import {PagesEnum} from "../../index";
-import {StateManager} from "../../Classes/StateManager";
 import {Errors, errorToString} from "../../Classes/ErrorMessages";
+import {PagesEnum} from "../../PagesEnum";
 
 function RegisterPage() {
     const [errorMessage, setErrorMessage] = useState("");
@@ -17,8 +16,7 @@ function RegisterPage() {
     }
 
     const errorFunc = (e: any) => {
-        //TODO: это конечно фигня что надо сравнивать через особый метод. Надо разобраться как в js хранить енам чтобы работало как строки
-        let errorType = e?.response?.data;
+        let errorType: string = e?.response?.data;
         if (errorType == null) {
             setErrorMessage("Unknown error")
             return;
