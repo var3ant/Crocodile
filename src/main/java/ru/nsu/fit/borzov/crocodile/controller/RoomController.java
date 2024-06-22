@@ -30,9 +30,4 @@ public class RoomController {
     public List<Room> getRooms() {
         return roomService.getRooms();
     }
-
-    @GetMapping("/ping")
-    public long ping() {
-        return 1;
-    }
 }

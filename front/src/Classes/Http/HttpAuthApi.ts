@@ -1,7 +1,7 @@
-import {StateManager} from "./StateManager";
-import {AxiosService} from "./Http/AxiosService";
+import {StateManager} from "../StateManager";
+import {AxiosService} from "./AxiosService";
 
-export class ServerRequests {
+export class HttpAuthApi {
     public static async login(name: string, password: string): Promise<number> {
         AxiosService.setAuthToken(null)
 

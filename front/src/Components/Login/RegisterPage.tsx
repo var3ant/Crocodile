@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Button, Space} from "antd";
 import {Login} from "./Login";
-import {ServerRequests} from "../../Classes/ServerRequests";
+import {HttpAuthApi} from "../../Classes/Http/HttpAuthApi";
 import {useNavigate} from "react-router-dom";
 import {Errors, errorToString} from "../../Classes/ErrorMessages";
 import {PagesEnum} from "../../PagesEnum";
@@ -40,7 +40,7 @@ function RegisterPage() {
             <Login
                 buttonText='Create Account'
                 onClick={(login, password) =>
-                    ServerRequests.register(login, password)
+                    HttpAuthApi.register(login, password)
                         .then(registerFunc)
                         .catch(errorFunc)
                 }

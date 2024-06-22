@@ -17,6 +17,7 @@ import ConnectionErrorEvent from "./Events/Errors/ConnectionErrorEvent";
 import {globalErrorEvent} from "../Components/ErrorModal/GlobalModalError";
 import {PagesEnum} from "../PagesEnum";
 import {StateManager} from "./StateManager";
+import {BACKEND_URL} from "./Http/Constants";
 
 class RoomConnection {
     private readonly _userId: number;
@@ -102,11 +103,14 @@ class RoomConnection {
     public connect(): boolean {
         if (this._client !== null) {
             console.error("Attempting to connect when it has already been completed")
-            globalErrorEvent({message:"Attempting to connect when it has already been completed", redirectPath:PagesEnum.ROOM_LIST})
+            globalErrorEvent({
+                message: "Attempting to connect when it has already been completed",
+                redirectPath: PagesEnum.ROOM_LIST
+            })
         }
 
         // this._cookies.set("userId", this._userId, {path: '/'})
-        let sockJS = new SockJS("http://localhost:8080/game");
+        let sockJS = new SockJS(BACKEND_URL + "/game");
         this._client = Stomp.over(sockJS);
         // console.log("before connect")
         // onConnected: (frame?: Frame | undefined) => any, onError?: ((error: string | Frame) => any) | undefined
@@ -120,7 +124,7 @@ class RoomConnection {
     private subscribe(topic: string, onMessageReceived: ((message: Stomp.Message) => any)) {
         if (this._client === null) {
             StateManager.trySetRoom(null);
-            globalErrorEvent({message:'connection lost', redirectPath:PagesEnum.ROOM_LIST})
+            globalErrorEvent({message: 'connection lost', redirectPath: PagesEnum.ROOM_LIST})
             return;
         }
 
@@ -129,7 +133,7 @@ class RoomConnection {
 
     public sendMessage(topic: string, message: any) {
         if (this._client === null) {
-            globalErrorEvent({message:'connection lost', redirectPath:PagesEnum.ROOM_LIST})
+            globalErrorEvent({message: 'connection lost', redirectPath: PagesEnum.ROOM_LIST})
             return;
         }
         this._client.send('/app' + topic, {}, JSON.stringify(message));

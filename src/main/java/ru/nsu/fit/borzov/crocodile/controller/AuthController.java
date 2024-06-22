@@ -35,7 +35,7 @@ public class AuthController {
     }
 
     @GetMapping("/ping")
-    public String pingString(@RequestParam String name) {
-        return name;
+    public String pingString() {
+        return "pong";
     }
 }

@@ -1,6 +1,6 @@
 ﻿import React from "react";
 import {Space} from "antd";
-import {ChatArea, MessageData} from "./ChatArea";
+import ChatArea, {MessageData} from "./ChatArea";
 import SendMessageLine from "./SendMessageLine";
 
 type ChatProps = {

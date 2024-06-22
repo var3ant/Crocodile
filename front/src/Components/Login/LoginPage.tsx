@@ -5,7 +5,7 @@ import {StateManager} from "../../Classes/StateManager";
 import {useNavigate} from "react-router-dom";
 import {Errors, errorToString} from "../../Classes/ErrorMessages";
 import {PagesEnum} from "../../PagesEnum";
-import {ServerRequests} from "../../Classes/ServerRequests";
+import {HttpAuthApi} from "../../Classes/Http/HttpAuthApi";
 
 function LoginPage() {
     const [errorMessage, setErrorMessage] = useState("");
@@ -39,7 +39,7 @@ function LoginPage() {
             <Login
                 buttonText='Log In'
                 onClick={(login, password) =>
-                    ServerRequests.login(login, password)
+                    HttpAuthApi.login(login, password)
                         .then(loginFunc)
                         .catch(errorFunc)
             }

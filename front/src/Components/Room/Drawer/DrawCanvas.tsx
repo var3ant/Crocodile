@@ -48,42 +48,18 @@ export class DrawCanvas extends React.Component<{
             this._ctx.drawImage(image, 0, 0)
         };
         image.src = imageSource;
-        // image.src = 'https://www.tutorialspoint.com/images/logo.png';
-        // this._ctx.drawImage(image, 0, 0)
-
     }
 
     public drawLine(startPoint: Point, finishPoint: Point, paintingSettings: PaintingSettings) {
         let ctx = this._ctx;
 
-        ctx.beginPath(); // begin
+        ctx.beginPath();
         ctx.lineWidth = paintingSettings.size;
         ctx.lineCap = 'round';
         ctx.strokeStyle = paintingSettings.color;
-        ctx.moveTo(startPoint.x, startPoint.y); // from
-        ctx.lineTo(finishPoint.x, finishPoint.y); // to
-        ctx.stroke(); // draw it!
-    }
-
-    componentDidMount() {
-        this._ctx = this._canvasRef.current.getContext('2d');
-        this.internalClear();
-    }
-
-    render() {
-        return (
-            <Card>
-                <canvas
-                    ref={this._canvasRef}
-                    width={width}
-                    height={height}
-                    onMouseDown={e => this.mouseDown(e)}
-                    onMouseUp={e => this.mouseUp(e)}
-                    onMouseMove={e => this.mouseMove(e)}
-                    style={canvasStyle}
-                />
-            </Card>
-        )
+        ctx.moveTo(startPoint.x, startPoint.y);
+        ctx.lineTo(finishPoint.x, finishPoint.y);
+        ctx.stroke();
     }
 
     private mouseDown(e: React.MouseEvent<HTMLElement>) {
@@ -121,6 +97,27 @@ export class DrawCanvas extends React.Component<{
 
     private setPosition(newPoint: Point) {
         this._startPoint = newPoint;
+    }
+
+    componentDidMount() {
+        this._ctx = this._canvasRef.current.getContext('2d');
+        this.internalClear();
+    }
+
+    render() {
+        return (
+            <Card bodyStyle={{padding: '7px', paddingBottom:'0px'}}>
+                <canvas
+                    ref={this._canvasRef}
+                    width={width}
+                    height={height}
+                    onMouseDown={e => this.mouseDown(e)}
+                    onMouseUp={e => this.mouseUp(e)}
+                    onMouseMove={e => this.mouseMove(e)}
+                    style={canvasStyle}
+                />
+            </Card>
+        )
     }
 }
 

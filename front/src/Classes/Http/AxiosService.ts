@@ -1,9 +1,10 @@
 import axios from 'axios';
+import {BACKEND_URL} from "./Constants";
 
 export class AxiosService {
 
     constructor() {
-        axios.defaults.baseURL = 'http://localhost:8080';
+        axios.defaults.baseURL = BACKEND_URL;
         axios.defaults.headers.post['Content-Type'] = 'application/json';
         console.log("ctor")
     }
