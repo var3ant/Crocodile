@@ -3,11 +3,25 @@ import {AxiosService} from "./Http/AxiosService";
 
 export class StateManager {
     private static room: RoomModel | null;
-    public static userId: number | null;
+    private static _userId: number | null;
     public static readonly axios: AxiosService = new AxiosService();
 
-    static trySetRoom(roomId: number): boolean {
+    public static get userId(): number | null {
+        return StateManager._userId;
+    }
+    public static set userId(value: number | null) {
+        StateManager._userId = value;
+    }
+
+    static trySetRoom(roomId: number | null): boolean {
         console.log("set roomid:" + roomId)
+
+        if(roomId == null) {
+            StateManager.room?.tryDisconnect();
+            StateManager.room = null;
+            return true;
+        }
+
         let userId = StateManager.userId;
         if (userId === null) {
             console.assert("userId === null")

@@ -9,8 +9,7 @@ export class ServerRequests {
             login: name,
             password: password
         })
-        //TODO: кейс с ошибкой
-        console.log(result)
+
         if (result.data.token !== null && result.data.token !== undefined) {
             AxiosService.setAuthToken(result.data.token)
         }
@@ -24,7 +23,7 @@ export class ServerRequests {
             login: name,
             password: password
         })
-        //TODO: кейс с ошибкой
+
         return result.data.id;
     }
 }

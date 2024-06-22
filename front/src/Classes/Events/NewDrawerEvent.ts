@@ -1,9 +1,11 @@
 import {ServerEvent} from "./ServerEvent";
 
 export class NewDrawerEvent implements ServerEvent {
-    public userId: number;
+    public readonly userId: number;
+    public readonly userName: string;
 
-    public constructor(userId: number) {
+    public constructor(userId: number, userName: string) {
         this.userId = userId;
+        this.userName = userName;
     }
 }

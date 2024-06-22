@@ -47,7 +47,7 @@ export function RoomPage() {
 
         let room = StateManager.getRoom();
         if (room != null && room.getRoomId() !== roomId) {
-            room.disconnect();
+            room.tryDisconnect();
             room = null;
         }
 
@@ -80,7 +80,7 @@ export function RoomPage() {
         } else if (event instanceof NewDrawerEvent) {
 
             let isDrawer = event.userId === StateManager.getRoom()?.userId;
-            setMessages([...messages, new MessageData(-1, "", "New drawer", event.userId.toString())])//TODO:username а не id
+            setMessages([...messages, new MessageData(-1, "", "New drawer", event.userName)])
             setIsDrawer(isDrawer)
             console.log("Drawer id: " + event.userId)
             console.log("My id: " + StateManager.getRoom()?.userId)

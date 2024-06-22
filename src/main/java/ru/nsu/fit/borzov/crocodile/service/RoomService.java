@@ -22,7 +22,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +31,7 @@ public class RoomService {
     private final UserRepository userRepository;
     private final GuessingPhraseRepository guessingPhraseRepository;
     private final MessageSenderService messageSenderService;
-    private final Random random = new Random();//TODO: рандом защищен от параллельных запросов?
+    private final ConcurrentRandomService random;
 
     public List<Room> getRooms() {
         return roomRepository.findAll();
@@ -113,7 +112,7 @@ public class RoomService {
             var users = room.getUsers();
 
             user.setRoom(null);
-            users.remove(user);//TODO: нужно ли оба действия делать?
+            users.remove(user);
 
             if (room.getDrawer() != null && user.getId() == room.getDrawer().getId()) {
                 room.setDrawer(null);
@@ -182,7 +181,7 @@ public class RoomService {
         var words = generatePhraseToChoose();
         room.setWordToChoose(words);
         roomRepository.save(room);
-        messageSenderService.sendToRoom(new NewDrawerMessage(newDrawer.getId()), room);
+        messageSenderService.sendToRoom(new NewDrawerMessage(newDrawer.getId(), newDrawer.getName()), room);
         messageSenderService.sendToUser(new ChooseWordMessage(words), newDrawer);
     }
 
@@ -239,7 +238,8 @@ public class RoomService {
                 || senderRoom.getDrawer().getId() != sender.getId()) {
             messageSenderService.sendToUser(new ImageMessage(""), receiver);
             //TODO: Что делать, если рисующий выйдет из комнаты сразу как ему отправится запрос. Или если резко сменится рисующий.
-            // Тут вообще много косяков может быть, это решает доп табличкой с инфой кто кому что должен.
+            // Тут вообще много косяков может быть,
+            // это решается доп табличкой с инфой что сервер должен отправить рисунок когда он придет и пачку сообщений о рисовании.
             return;
         }
 

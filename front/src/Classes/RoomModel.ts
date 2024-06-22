@@ -19,7 +19,9 @@ class RoomModel {
         this._roomConnection = new RoomConnection(this, userId, roomId);
 
         this.userId = userId;
-        this.name = roomId.toString();//TODO: имя а не id
+        //TODO: Когда буду делать разные правила по заходу (пароль, только для друзей и т.д.),
+        // буду ждать подтверждения что зашел, и в это подтверждение сервер положит имя сервера. А пока что и id'шника хватит
+        this.name = roomId.toString();
         this.roomId = roomId;
     }
 
@@ -47,6 +49,12 @@ class RoomModel {
 
     //region client messages
 
+    public tryDisconnect() {
+        this._roomConnection.trySendMessage("/disconnect", {})
+        this.disconnect();
+        return true;
+    }
+
     public disconnect() {
         this._roomConnection.sendMessage("/disconnect", {})
         this._roomConnection.disconnect();
@@ -61,12 +69,24 @@ class RoomModel {
     }
 
     public sendChatMessage(text: string): boolean {
+        if(this.isBlank(text)) {
+            return false;
+        }
         this._roomConnection.sendMessage("/chat", {message: text});
-        return true;//TODO: проверка что формат сообщения нормальный
+        return true;
+    }
+
+    private isBlank(text: string) {
+        return (!text || /^\s*$/.test(text));
     }
 
     public drawLine(startPoint: Point, finishPoint: Point, paintingSettings: PaintingSettings) {
-        this._roomConnection.sendMessage("/draw", {startPoint: startPoint, finishPoint: finishPoint, size: paintingSettings.size, color: paintingSettings.color});
+        this._roomConnection.sendMessage("/draw", {
+            startPoint: startPoint,
+            finishPoint: finishPoint,
+            size: paintingSettings.size,
+            color: paintingSettings.color
+        });
     }
 
     public chooseWord(index: number) {

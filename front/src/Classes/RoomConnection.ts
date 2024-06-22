@@ -14,6 +14,9 @@ import {ReceiveImageEvent} from "./Events/ReceiveImageEvent";
 import ClearEvent from "./Events/ClearEvent";
 import {ReactionEvent} from "./Events/ReactionEvent";
 import ConnectionErrorEvent from "./Events/Errors/ConnectionErrorEvent";
+import {globalErrorEvent} from "../Components/ErrorModal/GlobalModalError";
+import {PagesEnum} from "../PagesEnum";
+import {StateManager} from "./StateManager";
 
 class RoomConnection {
     private readonly _userId: number;
@@ -41,7 +44,8 @@ class RoomConnection {
 
             case "NEW_DRAWER_MESSAGE": {
                 let userId: number = body["userId"];
-                return new NewDrawerEvent(userId);
+                let userName: string = body["userName"];
+                return new NewDrawerEvent(userId, userName);
             }
 
             case "INFO_MESSAGE": {
@@ -97,9 +101,8 @@ class RoomConnection {
 
     public connect(): boolean {
         if (this._client !== null) {
-            //TODO:
-            console.log("client not null")
-            new Error("Already connected")
+            console.error("Attempting to connect when it has already been completed")
+            globalErrorEvent({message:"Attempting to connect when it has already been completed", redirectPath:PagesEnum.ROOM_LIST})
         }
 
         // this._cookies.set("userId", this._userId, {path: '/'})
@@ -116,7 +119,8 @@ class RoomConnection {
 
     private subscribe(topic: string, onMessageReceived: ((message: Stomp.Message) => any)) {
         if (this._client === null) {
-            //TODO:
+            StateManager.trySetRoom(null);
+            globalErrorEvent({message:'connection lost', redirectPath:PagesEnum.ROOM_LIST})
             return;
         }
 
@@ -125,10 +129,18 @@ class RoomConnection {
 
     public sendMessage(topic: string, message: any) {
         if (this._client === null) {
-            //TODO:
+            globalErrorEvent({message:'connection lost', redirectPath:PagesEnum.ROOM_LIST})
             return;
         }
         this._client.send('/app' + topic, {}, JSON.stringify(message));
+    }
+
+    public trySendMessage(topic: string, message: any): boolean {
+        if (this._client === null) {
+            return false;
+        }
+        this._client.send('/app' + topic, {}, JSON.stringify(message));
+        return true
     }
 
     private joinRoom() {
