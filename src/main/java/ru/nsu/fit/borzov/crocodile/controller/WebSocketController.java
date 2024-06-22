@@ -32,7 +32,7 @@ public class WebSocketController {
     @MessageMapping("/react_to_message")
     public void chat(ReactionRequest reactionRequest, Principal principal) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException, AuthenticationException {
         var userId = principalUtils.getUserId(principal);
-        roomService.react(reactionRequest.getMessageId(), reactionRequest.getReaction(), userId);
+        roomService.reactToMessage(reactionRequest.getMessageId(), reactionRequest.getReaction(), userId);
     }
 
     @MessageMapping("/choose_word")
@@ -67,7 +67,7 @@ public class WebSocketController {
     @MessageMapping("/clear/")
     public void joinRoom(Principal principal) throws UserNotFoundException, UserNotInRoomException, AuthenticationException {
             var userId = principalUtils.getUserId(principal);
-            roomService.clear(userId);
+            roomService.clearCanvas(userId);
     }
 
     @MessageMapping("/disconnect")

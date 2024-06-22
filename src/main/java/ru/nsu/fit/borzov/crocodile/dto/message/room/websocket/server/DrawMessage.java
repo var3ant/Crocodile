@@ -5,6 +5,8 @@ import lombok.Getter;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.DrawRequest;
 import lombok.experimental.Delegate;
 
+import javax.validation.constraints.NotNull;
+
 @Getter
 public class DrawMessage extends ServerMessage {
 
@@ -12,7 +14,7 @@ public class DrawMessage extends ServerMessage {
     @Getter(AccessLevel.NONE)
     private final DrawRequest data;
 
-    public DrawMessage(DrawRequest request) {
+    public DrawMessage(@NotNull DrawRequest request) {
         super(ServerMessageType.DRAW_MESSAGE);
         data = request;
     }

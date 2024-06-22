@@ -2,8 +2,11 @@ package ru.nsu.fit.borzov.crocodile.service;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.nsu.fit.borzov.crocodile.controller.WebSocketController;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.LoginResponse;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.LoginRequest;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.RegisterRequest;
@@ -24,11 +27,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final String[] reservedNames = new String[]{"Admin", "Info"};
 
     private final JwtTokenUtil jwtTokenUtil;
 
     public long register(RegisterRequest registerRequest) throws AlreadyExistException, IllegalNameException {
+        logger.warn("Trying to register with login {}", registerRequest.getLogin());
 
         var isExists = userRepository.existsByName(registerRequest.getLogin());
 
@@ -41,10 +46,13 @@ public class UserService {
         }
 
         var password = passwordEncoder.encode(CharBuffer.wrap(registerRequest.getPassword()));
+
+        logger.warn("User {} registered", registerRequest.getLogin());
         return userRepository.save(new User(registerRequest.getLogin(), password)).getId();
     }
 
     public List<Long> getUsers() {
+        logger.warn("Get all users");
         return userRepository.findAll().stream().map(User::getId).toList();
     }
 
@@ -55,6 +63,7 @@ public class UserService {
         if (passwordEncoder.matches(CharBuffer.wrap(loginRequest.getPassword()), user.getPassword())) {
             var userDto = userMapper.toUserDto(user);
             userDto.setToken(jwtTokenUtil.createToken(user.getName()));
+            logger.warn("User {} with id {} logged", loginRequest.getLogin(), userDto.getId());
             return userDto;
         }
 

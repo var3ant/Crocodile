@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {createEvent, createStore} from "effector";
 import {useUnit} from "effector-react";
-import {PagesEnum} from "../../PagesEnum";
+import {PagesEnum} from "../PagesEnum";
 
 export const globalErrorEvent = createEvent<GlobalError>();
 

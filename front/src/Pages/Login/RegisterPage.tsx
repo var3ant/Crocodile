@@ -4,7 +4,7 @@ import {Login} from "./Login";
 import {HttpAuthApi} from "../../Classes/Http/HttpAuthApi";
 import {useNavigate} from "react-router-dom";
 import {Errors, errorToString} from "../../Classes/ErrorMessages";
-import {PagesEnum} from "../../PagesEnum";
+import {PagesEnum} from "../PagesEnum";
 
 function RegisterPage() {
     const [errorMessage, setErrorMessage] = useState("");

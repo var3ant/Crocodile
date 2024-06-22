@@ -18,7 +18,7 @@ import {DrawMenu} from "./Drawer/DrawMenu";
 import {ReactionEvent} from "../../Classes/Events/ReactionEvent";
 import ClearEvent from "../../Classes/Events/ClearEvent";
 import ConnectionErrorEvent from "../../Classes/Events/Errors/ConnectionErrorEvent";
-import {PagesEnum} from "../../PagesEnum";
+import {PagesEnum} from "../PagesEnum";
 import {globalErrorEvent} from "../ErrorModal/GlobalModalError";
 
 export function RoomPage() {

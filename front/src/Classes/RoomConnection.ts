@@ -14,8 +14,8 @@ import {ReceiveImageEvent} from "./Events/ReceiveImageEvent";
 import ClearEvent from "./Events/ClearEvent";
 import {ReactionEvent} from "./Events/ReactionEvent";
 import ConnectionErrorEvent from "./Events/Errors/ConnectionErrorEvent";
-import {globalErrorEvent} from "../Components/ErrorModal/GlobalModalError";
-import {PagesEnum} from "../PagesEnum";
+import {globalErrorEvent} from "../Pages/ErrorModal/GlobalModalError";
+import {PagesEnum} from "../Pages/PagesEnum";
 import {StateManager} from "./StateManager";
 import {BACKEND_URL} from "./Http/Constants";
 

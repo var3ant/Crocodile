@@ -1,5 +1,5 @@
 import {ServerEvent} from "./ServerEvent";
-import {MessageData} from "../../Components/Room/Chat/ChatArea";
+import {MessageData} from "../../Pages/Room/Chat/ChatArea";
 
 export enum ReactionType {
     LIKED = 'LIKED',

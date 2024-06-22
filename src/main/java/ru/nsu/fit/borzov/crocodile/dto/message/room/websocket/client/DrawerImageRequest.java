@@ -2,17 +2,10 @@ package ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 public class DrawerImageRequest {
-    private String image;
+    private @NotNull String image;
     private long receiverId;
-
-    DrawerImageRequest() {
-
-    }
-
-    DrawerImageRequest(String image, long receiverId) {
-        this.image = image;
-        this.receiverId = receiverId;
-    }
 }

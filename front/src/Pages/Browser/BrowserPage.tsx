@@ -3,7 +3,7 @@ import {Button} from "antd";
 import {RoomBrowser} from "./RoomBrowser";
 import {useNavigate} from "react-router-dom";
 import {AxiosService} from "../../Classes/Http/AxiosService";
-import {PagesEnum} from "../../PagesEnum";
+import {PagesEnum} from "../PagesEnum";
 
 export function BrowserPage() {
     const navigate = useNavigate();

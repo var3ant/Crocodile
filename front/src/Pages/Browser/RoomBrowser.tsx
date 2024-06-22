@@ -6,7 +6,7 @@ import {StateManager} from "../../Classes/StateManager";
 import {useNavigate} from "react-router-dom";
 import "../Style/Room.css";
 import CreateRoomModal from "./CreateRoomModal";
-import {PagesEnum} from "../../PagesEnum";
+import {PagesEnum} from "../PagesEnum";
 import {globalErrorEvent} from "../ErrorModal/GlobalModalError";
 
 export function RoomBrowser() {

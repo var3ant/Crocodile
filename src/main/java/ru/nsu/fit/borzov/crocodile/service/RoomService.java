@@ -1,6 +1,7 @@
 package ru.nsu.fit.borzov.crocodile.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.buf.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -33,15 +34,21 @@ public class RoomService {
     private final MessageSenderService messageSenderService;
     private final ConcurrentRandomService random;
 
+
+    private static final int MIN_USERS_TO_START_GAME = 1;
+
     public List<Room> getRooms() {
         return roomRepository.findAll();
     }
 
     public boolean join(long userId, long roomId) throws UserNotFoundException {
-        var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        logger.info("user {} joining the room {}", userId, roomId);
 
+        var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         var roomOptional = roomRepository.findById(roomId);
+
         if (roomOptional.isEmpty()) {
+            logger.info("Room {} not found", roomId);
             messageSenderService.sendToUser(new ConnectionError(roomId), user);
             return false;
         }
@@ -56,14 +63,17 @@ public class RoomService {
         roomRepository.save(room);
 
         if (drawerBeforeUserConnect != null) {
+            logger.info("Sending request for the drawer {} in room {}", drawerBeforeUserConnect.getId(), roomId);
             messageSenderService.sendToUser(new GetImageMessage(user.getId()), drawerBeforeUserConnect);
         }
+
+        logger.info("User {} joined to {}", userId, roomId);
         messageSenderService.sendToRoom(new InfoMessage(MessageFormat.format("User connected: {0}", user.getName())), room);
         return true;
     }
 
-    public void sendChatMessage(ChatRequest message, long userId) throws UserNotFoundException, UserNotInRoomException, WrongGameRoleException {
-        logger.info("chat message from {}: {}", userId, message.getMessage());
+    public void sendChatMessage(@NotNull ChatRequest message, long userId) throws UserNotFoundException, UserNotInRoomException, WrongGameRoleException {
+        logger.info("Chat message from {}: {}", userId, message.getMessage());
 
         var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
@@ -83,7 +93,7 @@ public class RoomService {
         messageSenderService.sendToRoom(new ChatMessage(user.getId(), user.getName(), message.getMessage()), room);
     }
 
-    public void sendDrawMessage(DrawRequest draw, long userId) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException {
+    public void sendDrawMessage(@NotNull DrawRequest draw, long userId) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException {
         logger.info(
                 "draw from ({},{}) to ({},{})",
                 draw.getStartPoint().getX(),
@@ -104,6 +114,8 @@ public class RoomService {
     }
 
     public void disconnect(long userId) throws UserNotFoundException {
+        logger.info("disconnecting user {}", userId);
+
         var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         var room = user.getRoom();
@@ -132,6 +144,8 @@ public class RoomService {
     }
 
     public void chooseWord(long userId, int index) throws UserNotFoundException, UserNotInRoomException, WrongGameRoleException, IlligalRequestArgumentException {
+        logger.info("{} choose word {}", userId, index);
+
         var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         var room = user.getRoom();
@@ -146,7 +160,7 @@ public class RoomService {
         var wordsToChoose = room.getWordToChoose();
 
         if (index < 0 || index >= wordsToChoose.size()) {
-            logger.error("Index of chosen word is out of bound");
+            logger.warn("Index of chosen word is out of bound");
             throw new IlligalRequestArgumentException("index");
         }
 
@@ -156,11 +170,9 @@ public class RoomService {
     }
 
     private void chooseNewDrawerIfNeeded(Room room) {
-        var minimumUsersToStartGame = 1;
-
         var users = room.getUsers();
         if (room.getDrawer() == null) {
-            if (users.size() >= minimumUsersToStartGame) {
+            if (users.size() >= MIN_USERS_TO_START_GAME) {
                 chooseNewDrawer(room);
             } else {
                 messageSenderService.sendToRoom(new InfoMessage("Waiting for players..."), room);
@@ -168,7 +180,7 @@ public class RoomService {
         }
     }
 
-    private void chooseNewDrawer(Room room) {
+    private void chooseNewDrawer(@NotNull Room room) {
         var users = room.getUsers();
 
         var newDrawer = users.get(random.nextInt(users.size()));
@@ -176,16 +188,17 @@ public class RoomService {
     }
 
     private void setDrawer(Room room, User newDrawer) {
+        logger.info("New drawer {} of room {}", newDrawer.getId(), room.getId());
         room.setDrawer(newDrawer);
 
-        var words = generatePhraseToChoose();
+        var words = generatePhraseToChoose(room);
         room.setWordToChoose(words);
         roomRepository.save(room);
         messageSenderService.sendToRoom(new NewDrawerMessage(newDrawer.getId(), newDrawer.getName()), room);
         messageSenderService.sendToUser(new ChooseWordMessage(words), newDrawer);
     }
 
-    private List<String> generatePhraseToChoose() {
+    private List<String> generatePhraseToChoose(Room room) {
         var count = guessingPhraseRepository.count();
 
         var phrases = new ArrayList<String>();
@@ -194,7 +207,7 @@ public class RoomService {
             var idx = random.nextInt((int) count);
             Page<GuessingPhrase> phrasePage = guessingPhraseRepository.findAll(PageRequest.of(idx, 1));
             var phraseOpt = phrasePage.stream().findFirst();
-            if(phraseOpt.isPresent()) {
+            if (phraseOpt.isPresent()) {
                 phrases.add(phraseOpt.get().getPhrase());
             } else {
                 logger.error("Phrases cannot be received");
@@ -202,6 +215,7 @@ public class RoomService {
             }
         }
 
+        logger.info("Phrases for room {}:{}", room.getId(), StringUtils.join(phrases, ','));
         return phrases;
     }
 
@@ -214,7 +228,8 @@ public class RoomService {
         return roomOpt.get();
     }
 
-    public long create(String name) throws AlreadyExistException {
+    public long create(@NotNull String name) throws AlreadyExistException {
+        logger.info("Creating room {}", name);
         if (roomRepository.existsByName(name)) {
             throw new AlreadyExistException();
         }
@@ -225,7 +240,8 @@ public class RoomService {
         return room.getId();
     }
 
-    public void sendImage(long senderId, String image, long receiverId) throws UserNotFoundException, UserNotInRoomException {
+    public void sendImage(long senderId, @NotNull String image, long receiverId) throws UserNotFoundException, UserNotInRoomException {
+        logger.info("Sending image from {} to {}", senderId, receiverId);
         var sender = userRepository.findById(senderId).orElseThrow(UserNotFoundException::new);
         var receiver = userRepository.findById(receiverId).orElseThrow(UserNotFoundException::new);
 
@@ -236,6 +252,8 @@ public class RoomService {
 
         if (receiver.getRoom().getId() != senderRoom.getId()
                 || senderRoom.getDrawer().getId() != sender.getId()) {
+
+            logger.info("Empty image from {} to {} sent", senderId, receiverId);
             messageSenderService.sendToUser(new ImageMessage(""), receiver);
             //TODO: Что делать, если рисующий выйдет из комнаты сразу как ему отправится запрос. Или если резко сменится рисующий.
             // Тут вообще много косяков может быть,
@@ -246,7 +264,9 @@ public class RoomService {
         messageSenderService.sendToUser(new ImageMessage(image), receiver);
     }
 
-    public void clear(long userId) throws UserNotFoundException, UserNotInRoomException {
+    public void clearCanvas(long userId) throws UserNotFoundException, UserNotInRoomException {
+        logger.info("Clear canvas request from {}", userId);
+
         var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         var room = user.getRoom();
         if (room == null) {
@@ -255,7 +275,9 @@ public class RoomService {
         messageSenderService.sendToRoom(new ClearMessage(), room);
     }
 
-    public void react(@NotNull String messageId, @NotNull ReactionType reaction, long userId) throws UserNotInRoomException, UserNotFoundException, WrongGameRoleException {
+    public void reactToMessage(@NotNull String messageId, @NotNull ReactionType reaction, long userId) throws UserNotInRoomException, UserNotFoundException, WrongGameRoleException {
+        logger.info("Reaction {} to message {} from {}", reaction.name(), messageId, userId);
+
         var user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         var room = user.getRoom();
         if (room == null) {
@@ -266,6 +288,6 @@ public class RoomService {
             throw new WrongGameRoleException();
         }
 
-        messageSenderService.sendToRoom(new ReactionMessage(messageId, reaction),room);
+        messageSenderService.sendToRoom(new ReactionMessage(messageId, reaction), room);
     }
 }

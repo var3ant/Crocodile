@@ -1,8 +1,8 @@
 import RoomConnection from "./RoomConnection";
-import {MessageData} from "../Components/Room/Chat/ChatArea";
+import {MessageData} from "../Pages/Room/Chat/ChatArea";
 import {ServerEvent} from "./Events/ServerEvent";
 import {Point} from "./Events/DrawEvent";
-import {PaintingSettings} from "../Components/Room/Drawer/DrawCanvas";
+import {PaintingSettings} from "../Pages/Room/Drawer/DrawCanvas";
 import {ReactionType} from "./Events/UserMessageEvent";
 
 class RoomModel {

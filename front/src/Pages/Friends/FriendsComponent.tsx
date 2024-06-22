@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import {StateManager} from "../../Classes/StateManager";
 import {HttpFriendApi} from "../../Classes/Http/HttpFriendApi";
 import FriendView from "../../Classes/Http/Response/FriendView";
-import {PagesEnum} from "../../PagesEnum";
+import {PagesEnum} from "../PagesEnum";
 import {globalErrorEvent} from "../ErrorModal/GlobalModalError";
 
 export function FriendsComponent() {

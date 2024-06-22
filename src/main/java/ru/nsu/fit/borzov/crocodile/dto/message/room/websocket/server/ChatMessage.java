@@ -2,6 +2,7 @@ package ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.server;
 
 import lombok.Getter;
 
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Getter
@@ -12,7 +13,7 @@ public class ChatMessage extends ServerMessage {
     private final String text;
     private final ReactionType reaction;
 
-    public ChatMessage(long userId, String userName, String text, ReactionType reaction) {
+    public ChatMessage(long userId, @NotNull String userName, @NotNull String text, @NotNull ReactionType reaction) {
         super(ServerMessageType.CHAT_MESSAGE);
         messageId = UUID.randomUUID();
         this.text = text;

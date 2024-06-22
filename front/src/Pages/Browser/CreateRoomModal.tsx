@@ -4,7 +4,7 @@ import {HttpRoomApi} from "../../Classes/Http/HttpRoomApi";
 import {StateManager} from "../../Classes/StateManager";
 import {useNavigate} from "react-router-dom";
 import {Errors, errorToString} from "../../Classes/ErrorMessages";
-import {PagesEnum} from "../../PagesEnum";
+import {PagesEnum} from "../PagesEnum";
 
 export default function CreateRoomModal(props: Readonly<{
     isOpen: boolean,

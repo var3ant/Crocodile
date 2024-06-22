@@ -14,6 +14,7 @@ import ru.nsu.fit.borzov.crocodile.model.User;
 import ru.nsu.fit.borzov.crocodile.repository.FriendRequestRepository;
 import ru.nsu.fit.borzov.crocodile.repository.UserRepository;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
 
@@ -27,19 +28,24 @@ public class FriendService {
     private final UserMapper userMapper;
     private final Logger logger = getLogger(FriendService.class);
 
+    private static final int COUNT_RESULTS_FOR_BY_NAME_REQUEST = 10;
 
-    public void sendFriendRequest(Long userId, Long anotherUserId) throws UserNotFoundException, IllegalUserException {
+
+    public void sendFriendRequest(long userId, long anotherUserId) throws UserNotFoundException, IllegalUserException {
+        logger.info("Friend request from {} to {}", userId, anotherUserId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         User anotherUser = userRepository.findById(anotherUserId)
                 .orElseThrow(UserNotFoundException::new);
 
-        if(user.getId() == anotherUser.getId()) {
+        if (user.getId() == anotherUser.getId()) {
             throw new IllegalUserException();
         }
 
         var inverseRequest = friendRequestRepository.findFirstByFromAndTo(anotherUser, user);
         if (inverseRequest.isPresent()) {
+            logger.info("Found outcomming request while sending incoming request from {} to {}. Adding to friends", userId, anotherUserId);
             user.getFriends().add(anotherUser);
             anotherUser.getFriends().add(user);
             userRepository.save(user);
@@ -48,10 +54,13 @@ public class FriendService {
             return;
         }
 
+        logger.info("Friend request from {} to {} was saved", userId, anotherUserId);
         friendRequestRepository.save(new FriendRequest(user, anotherUser));
     }
 
-    public void declineFriendRequest(Long userId, Long anotherUserId) throws UserNotFoundException {
+    public void declineFriendRequest(long userId, long anotherUserId) throws UserNotFoundException {
+        logger.info("Decline friend request from {} to {}", anotherUserId, userId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         User anotherUser = userRepository.findById(anotherUserId)
@@ -61,7 +70,9 @@ public class FriendService {
         request.ifPresent(friendRequestRepository::delete);
     }
 
-    public boolean cancelFriendRequest(Long userId, Long anotherUserId) throws UserNotFoundException {
+    public boolean cancelFriendRequest(long userId, long anotherUserId) throws UserNotFoundException {
+        logger.info("Cancel friend request from {} to {}", userId, anotherUserId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         User anotherUser = userRepository.findById(anotherUserId)
@@ -77,27 +88,37 @@ public class FriendService {
         return false;
     }
 
-    public Set<User> getFriends(Long userId) throws UserNotFoundException {
+    public Set<User> getFriends(long userId) throws UserNotFoundException {
+        logger.info("Getting friends for {}", userId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
         return user.getFriends();
     }
 
-    public void delete(long userId, Long anotherUserId) throws UserNotFoundException {
+    public void delete(long userId, long anotherUserId) throws UserNotFoundException {
+        logger.info("Deleting user {} from friend of user {}", anotherUserId, userId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
         User anotherUser = userRepository.findById(anotherUserId)
                 .orElseThrow(UserNotFoundException::new);
 
-        anotherUser.getFriends().removeIf(friend -> friend.getId() == userId);
-        user.getFriends().removeIf(friend -> friend.getId() == anotherUserId);
+        var foundOnAnotherUser = anotherUser.getFriends().removeIf(friend -> friend.getId() == userId);
+        var foundOnUser = user.getFriends().removeIf(friend -> friend.getId() == anotherUserId);
+
+        if (!foundOnAnotherUser || !foundOnUser) {
+            logger.warn("Cant delete user {} from friends of {}. User not found.", anotherUserId, userId);
+        }
 
         userRepository.save(user);
         userRepository.save(anotherUser);
     }
 
     public List<NameUserResponse> getSentFriendRequests(long userId) throws UserNotFoundException {
+        logger.info("Get sent friend requests for {}", userId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
@@ -107,6 +128,8 @@ public class FriendService {
     }
 
     public List<NameUserResponse> getReceivedFriendRequests(long userId) throws UserNotFoundException {
+        logger.info("Get received friend requests for {}", userId);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
@@ -116,11 +139,13 @@ public class FriendService {
     }
 
     public List<PotentialFriendResponse> getPotentialFriendsByNameLike(long userId, String name) throws UserNotFoundException {
+        logger.info("Get potential friends by name for {} and name '{}'", userId, name);
+
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
         logger.info("Search for user with name like: {}", name);
-        var users = userRepository.findAllPotentialFriendsByNameStartingWith(user.getId(), name, PageRequest.of(0, 10));
+        var users = userRepository.findAllPotentialFriendsByNameStartingWith(user.getId(), name, PageRequest.of(0, COUNT_RESULTS_FOR_BY_NAME_REQUEST));
         return users.stream().map(potentialFriend -> toPotentialFriend(user, potentialFriend)).toList();
     }
 
