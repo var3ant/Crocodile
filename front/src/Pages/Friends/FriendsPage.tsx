@@ -1,4 +1,3 @@
-import {useNavigate} from "react-router-dom";
 import {FriendsComponent} from "./FriendsComponent";
 import ReceivedFriendRequestComponent from "./ReceivedFriendRequestComponent";
 import SentFriendRequestComponent from "./SentFriendRequestComponent";

@@ -14,7 +14,6 @@ import ru.nsu.fit.borzov.crocodile.model.User;
 import ru.nsu.fit.borzov.crocodile.repository.FriendRequestRepository;
 import ru.nsu.fit.borzov.crocodile.repository.UserRepository;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
 

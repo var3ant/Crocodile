@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.nsu.fit.borzov.crocodile.controller.WebSocketController;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.LoginResponse;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.LoginRequest;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.RegisterRequest;
@@ -19,7 +18,6 @@ import ru.nsu.fit.borzov.crocodile.model.User;
 import ru.nsu.fit.borzov.crocodile.repository.UserRepository;
 
 import java.nio.CharBuffer;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -49,11 +47,6 @@ public class UserService {
 
         logger.warn("User {} registered", registerRequest.getLogin());
         return userRepository.save(new User(registerRequest.getLogin(), password)).getId();
-    }
-
-    public List<Long> getUsers() {
-        logger.warn("Get all users");
-        return userRepository.findAll().stream().map(User::getId).toList();
     }
 
     public LoginResponse login(LoginRequest loginRequest) throws InvalidUserAuthDataException {

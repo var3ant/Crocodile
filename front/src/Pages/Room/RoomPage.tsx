@@ -53,7 +53,6 @@ export function RoomPage() {
 
         if (room == null && !StateManager.trySetRoom(roomId)) {
             globalErrorEvent({redirectPath: PagesEnum.ROOM_LIST, message: 'Room not found'})
-            return;
         }
     });
 
