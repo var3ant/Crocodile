@@ -29,7 +29,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/game/**").permitAll()
+                        .requestMatchers("/auth/**", "/game/**", "/ping").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthFilter(jwtTokenUtil, userService), UsernamePasswordAuthenticationFilter.class)

@@ -10,13 +10,12 @@ import ru.nsu.fit.borzov.crocodile.exception.IllegalNameException;
 import ru.nsu.fit.borzov.crocodile.exception.InvalidUserAuthDataException;
 import ru.nsu.fit.borzov.crocodile.service.UserService;
 
-import java.util.List;
-
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
+
     private final UserService userService;
 
     @PostMapping("/register")
@@ -27,15 +26,5 @@ public class AuthController {
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest loginRequest) throws InvalidUserAuthDataException {
         return userService.login(loginRequest);
-    }
-
-    @GetMapping
-    public List<Long> getUsers() {
-        return userService.getUsers();
-    }
-
-    @GetMapping("/ping")
-    public String pingString() {
-        return "pong";
     }
 }

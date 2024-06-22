@@ -4,7 +4,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import ru.nsu.fit.borzov.crocodile.model.Room;
 import ru.nsu.fit.borzov.crocodile.model.User;
 
 import java.util.List;
@@ -17,8 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void deleteAll();
 
     Optional<User> findByName(String name);
-
-    List<User> findAllByRoom(Room room);
 
     @Query("select u from user_data u where u.name like CONCAT(:username,'%') and u.id != :actorId order by length(u.name)")
     List<User> findAllPotentialFriendsByNameStartingWith(long actorId, String username, Pageable pageable);
