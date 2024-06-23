@@ -23,6 +23,8 @@ export default function SentFriendRequestComponent() {
                 display: 'flex',
                 flexDirection: 'column',
                 margin: '5px',
+                overflowY: 'visible',
+                overflowX: 'hidden'
             }}>
                 <Card style={{minHeight: '200px'}}>
                     {requests.map((following) => {

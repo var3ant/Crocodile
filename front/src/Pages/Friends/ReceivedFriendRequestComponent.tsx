@@ -23,9 +23,11 @@ export default function ReceivedFriendRequestComponent() {
                 display: 'flex',
                 flexDirection: 'column',
                 margin: '5px',
-                justifyContent: 'stretch', alignContent: 'stretch'
+                justifyContent: 'stretch', alignContent: 'stretch',
+                overflowY: 'visible',
+                overflowX: 'hidden'
             }}>
-                <Card style={{minHeight: '200px'}}>
+                <Card style={{minHeight: '200px', alignSelf:'stretch'}}>
                     {requests.map((follower) => {
                         return (
                             <YesNoFriendRow key={follower.id} user={follower}

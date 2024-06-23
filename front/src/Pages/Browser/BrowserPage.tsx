@@ -11,10 +11,15 @@ export function BrowserPage() {
 
     return (
         <div className='vertical'>
-            <Button style={{width: 'fit-content', alignSelf: 'center'}} onClick={() => {
-                AxiosService.setAuthToken(null)
-                navigate(PagesEnum.LOGIN)
-            }}>Log Out</Button>
+            <div className='horizontal' style={{alignSelf: 'center', gap:'5px'}}>
+                <Button onClick={() => {
+                    AxiosService.setAuthToken(null)
+                    navigate(PagesEnum.LOGIN)
+                }}>Log Out</Button>
+                <Button onClick={() => {
+                    navigate(PagesEnum.FRIENDS)
+                }}>Friends</Button>
+            </div>
             <div style={{
                 display: 'flex',
                 flexDirection: 'column',

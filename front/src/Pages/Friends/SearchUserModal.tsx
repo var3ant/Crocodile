@@ -41,19 +41,19 @@ export default function SearchUserModal(props: Readonly<{ isOpen: boolean, setOp
                                 if (user.requestAlreadySent) {
                                     return (
                                         <div className='horizontal' key={user.id}>
-                                            <div>{user.name}</div>
+                                            <div style={{alignSelf:'center', margin:'5px'}}>{user.name}</div>
                                             <CloseButton onClick={() => HttpFriendApi.cancelRequest(user.id).then(update)}/>
                                         </div>);
                                 } else if (user.alreadyFriend) {
                                     return (
                                         <div className='horizontal' key={user.id}>
-                                            <div>{user.name}</div>
+                                            <div style={{alignSelf:'center', margin:'5px'}}>{user.name}</div>
                                             <UserOutlined style={{color: green[5]}}/>
                                         </div>)
                                 } else {
                                     return (
                                         <div className='horizontal' key={user.id}>
-                                            <div>{user.name}</div>
+                                            <div style={{alignSelf:'center', margin:'5px'}}>{user.name}</div>
                                             <CheckButton onClick={() => HttpFriendApi.sendRequest(user.id).then(update)}/>
                                         </div>);
                                 }
