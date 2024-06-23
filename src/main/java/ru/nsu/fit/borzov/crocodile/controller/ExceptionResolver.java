@@ -21,7 +21,7 @@ public class ExceptionResolver {
     }
 
     @ExceptionHandler
-    public ResponseEntity<Object> handleRuntimeError(RuntimeException runtimeException) {
+    public ResponseEntity<Object> handleRuntimeError(Exception runtimeException) {
         logger.error("Runtime exception:", runtimeException);
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -29,6 +29,6 @@ public class ExceptionResolver {
     @ExceptionHandler({HttpException.class})
     public ResponseEntity<ExceptionMessage> handleException(HttpException exception) {
         logger.info("User exception:", exception);
-        return new ResponseEntity<>(exception.getClientMessage(), exception.getStatus());
+        return new ResponseEntity<>( exception.getClientMessage(), exception.getStatus());
     }
 }

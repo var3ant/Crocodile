@@ -8,5 +8,4 @@ import ru.nsu.fit.borzov.crocodile.model.GuessingPhrase;
 
 @Repository
 public interface GuessingPhraseRepository extends JpaRepository<GuessingPhrase, Long> {
-    Page<GuessingPhrase> findAll(Pageable pageable);
 }

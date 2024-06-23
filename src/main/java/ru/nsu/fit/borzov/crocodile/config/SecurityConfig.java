@@ -15,10 +15,13 @@ import ru.nsu.fit.borzov.crocodile.service.JwtTokenUtil;
 import ru.nsu.fit.borzov.crocodile.service.UserService;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
+//TODO: заменить все эти JWTUtils и конфиг на
+// https://docs.spring.io/spring-security/reference/servlet/oauth2/index.html#oauth2-resource-server-access-token-jwt
+
+
 @Configuration
 @RequiredArgsConstructor
 @EnableTransactionManagement
-//@EnableRetry
 @EnableWebSecurity
 public class SecurityConfig {
 

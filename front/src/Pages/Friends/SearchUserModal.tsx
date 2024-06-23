@@ -1,11 +1,12 @@
 import React, {useState} from "react";
 import PotentialFriendView from "../../Classes/Http/Response/PotentialFriendView";
-import {HttpFriendApi} from "../../Classes/Http/HttpFriendApi";
 import {Card, Input, Modal} from "antd";
 import CloseButton from "../../Classes/Http/Response/Button/CloseButton";
 import CheckButton from "../../Classes/Http/Response/Button/CheckButton";
 import {green} from "@ant-design/colors";
 import {UserOutlined} from "@ant-design/icons";
+import {HttpFriendRequestApi} from "../../Classes/Http/HttpFriendRequestApi";
+import {HttpFriendApi} from "../../Classes/Http/HttpFriendApi";
 
 const {Search} = Input;
 
@@ -42,7 +43,7 @@ export default function SearchUserModal(props: Readonly<{ isOpen: boolean, setOp
                                     return (
                                         <div className='horizontal' key={user.id}>
                                             <div style={{alignSelf:'center', margin:'5px'}}>{user.name}</div>
-                                            <CloseButton onClick={() => HttpFriendApi.cancelRequest(user.id).then(update)}/>
+                                            <CloseButton onClick={() => HttpFriendRequestApi.cancelRequest(user.id).then(update)}/>
                                         </div>);
                                 } else if (user.alreadyFriend) {
                                     return (
@@ -54,7 +55,7 @@ export default function SearchUserModal(props: Readonly<{ isOpen: boolean, setOp
                                     return (
                                         <div className='horizontal' key={user.id}>
                                             <div style={{alignSelf:'center', margin:'5px'}}>{user.name}</div>
-                                            <CheckButton onClick={() => HttpFriendApi.sendRequest(user.id).then(update)}/>
+                                            <CheckButton onClick={() => HttpFriendRequestApi.sendRequest(user.id).then(update)}/>
                                         </div>);
                                 }
                             })}

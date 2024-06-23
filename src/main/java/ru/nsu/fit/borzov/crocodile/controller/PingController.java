@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+//TODO: Переписать на spring-actuator
 @RestController
 @RequiredArgsConstructor
 public class PingController {

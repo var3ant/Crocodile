@@ -1,8 +1,7 @@
 package ru.nsu.fit.borzov.crocodile.dto.message.room.http.response;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
-import javax.validation.constraints.NotNull;
 
 @Data
 public class PotentialFriendResponse {

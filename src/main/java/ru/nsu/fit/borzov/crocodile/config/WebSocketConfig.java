@@ -78,6 +78,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         if (authorizationHeader == null) {
             throw new AuthenticationException();
         }
+        //TODO: тут при использовании https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html можно JWTDecoder использовать
         String token = authorizationHeader.substring(7);
 
         return jwtTokenUtil.validateToken(userService, token);

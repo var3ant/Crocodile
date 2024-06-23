@@ -1,5 +1,6 @@
 package ru.nsu.fit.borzov.crocodile.service;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.buf.StringUtils;
 import org.slf4j.Logger;
@@ -12,7 +13,6 @@ import ru.nsu.fit.borzov.crocodile.model.GuessingPhrase;
 import ru.nsu.fit.borzov.crocodile.model.Room;
 import ru.nsu.fit.borzov.crocodile.repository.GuessingPhraseRepository;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class PhrasesService {
 
     private final GuessingPhraseRepository guessingPhraseRepository;
 
-    public List<String> generatePhraseToChoose(@NotNull Room room) {
+    public List<String> generatePhraseToChoose(@NonNull Room room) {
         var count = guessingPhraseRepository.count();
 
         var phrases = new ArrayList<String>();

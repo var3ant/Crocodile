@@ -1,8 +1,8 @@
 package ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.server;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Getter

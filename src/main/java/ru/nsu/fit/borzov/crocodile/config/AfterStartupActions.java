@@ -24,6 +24,7 @@ public class AfterStartupActions {
 
     private final Logger logger = getLogger(AfterStartupActions.class);
 
+    //TODO: это нужно например через flyway написать, но пока так
     @EventListener(ApplicationReadyEvent.class)
     public void doSomethingAfterStartup() {
         if (guessingPhraseRepository.count() != 0) {

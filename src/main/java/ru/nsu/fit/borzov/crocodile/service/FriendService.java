@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.FriendResponse;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.NameUserResponse;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.PotentialFriendResponse;
 import ru.nsu.fit.borzov.crocodile.exception.IllegalUserException;
@@ -15,7 +17,6 @@ import ru.nsu.fit.borzov.crocodile.repository.FriendRequestRepository;
 import ru.nsu.fit.borzov.crocodile.repository.UserRepository;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -24,32 +25,28 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class FriendService {
     private final Logger logger = getLogger(FriendService.class);
     private final UserMapper userMapper;
-
     private final UserRepository userRepository;
+    private final UserService userService;
     private final FriendRequestRepository friendRequestRepository;
 
     private static final int COUNT_RESULTS_FOR_BY_NAME_REQUEST = 10;
 
-
+    @Transactional
     public void sendFriendRequest(long userId, long anotherUserId) throws UserNotFoundException, IllegalUserException {
         logger.info("Friend request from {} to {}", userId, anotherUserId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
-        User anotherUser = userRepository.findById(anotherUserId)
-                .orElseThrow(UserNotFoundException::new);
-
-        if (user.getId() == anotherUser.getId()) {
+        if (userId == anotherUserId) {
             throw new IllegalUserException();
         }
+
+        User user = userService.findUserOrThrow(userId);
+        User anotherUser = userService.findUserOrThrow(anotherUserId);
 
         var inverseRequest = friendRequestRepository.findFirstByFromAndTo(anotherUser, user);
         if (inverseRequest.isPresent()) {
             logger.info("Found outcomming request while sending incoming request from {} to {}. Adding to friends", userId, anotherUserId);
             user.getFriends().add(anotherUser);
             anotherUser.getFriends().add(user);
-            userRepository.save(user);
-            userRepository.save(anotherUser);
             friendRequestRepository.delete(inverseRequest.get());
             return;
         }
@@ -58,25 +55,23 @@ public class FriendService {
         friendRequestRepository.save(new FriendRequest(user, anotherUser));
     }
 
+    @Transactional
     public void declineFriendRequest(long userId, long anotherUserId) throws UserNotFoundException {
         logger.info("Decline friend request from {} to {}", anotherUserId, userId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
-        User anotherUser = userRepository.findById(anotherUserId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = userService.findUserOrThrow(userId);
+        User anotherUser = userService.findUserOrThrow(anotherUserId);
 
         var request = friendRequestRepository.findFirstByFromAndTo(anotherUser, user);
         request.ifPresent(friendRequestRepository::delete);
     }
 
+    @Transactional
     public boolean cancelFriendRequest(long userId, long anotherUserId) throws UserNotFoundException {
         logger.info("Cancel friend request from {} to {}", userId, anotherUserId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
-        User anotherUser = userRepository.findById(anotherUserId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = userService.findUserOrThrow(userId);
+        User anotherUser = userService.findUserOrThrow(anotherUserId);
 
         var request = friendRequestRepository.findFirstByFromAndTo(user, anotherUser);
 
@@ -88,63 +83,62 @@ public class FriendService {
         return false;
     }
 
-    public Set<User> getFriends(long userId) throws UserNotFoundException {
+    @Transactional
+    public List<FriendResponse> getFriends(long userId) throws UserNotFoundException {
         logger.info("Getting friends for {}", userId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = userService.findUserOrThrow(userId);
 
-        return user.getFriends();
+        return user.getFriends().stream().map(userMapper::toFriendDto).toList();
     }
 
+    @Transactional
     public void delete(long userId, long anotherUserId) throws UserNotFoundException {
         logger.info("Deleting user {} from friend of user {}", anotherUserId, userId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
-        User anotherUser = userRepository.findById(anotherUserId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = userService.findUserOrThrow(userId);
+        User anotherUser = userService.findUserOrThrow(anotherUserId);
 
-        var foundOnAnotherUser = anotherUser.getFriends().removeIf(friend -> friend.getId() == userId);
-        var foundOnUser = user.getFriends().removeIf(friend -> friend.getId() == anotherUserId);
+        var foundOnAnotherUser = anotherUser.getFriends().remove(user);
+        var foundOnUser = user.getFriends().remove(anotherUser);
 
         if (!foundOnAnotherUser || !foundOnUser) {
             logger.warn("Cant delete user {} from friends of {}. User not found.", anotherUserId, userId);
         }
 
-        userRepository.save(user);
-        userRepository.save(anotherUser);
+//        userRepository.save(user);
+//        userRepository.save(anotherUser);
     }
 
+    @Transactional
     public List<NameUserResponse> getSentFriendRequests(long userId) throws UserNotFoundException {
         logger.info("Get sent friend requests for {}", userId);
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = userService.findUserOrThrow(userId);
 
         var requests = friendRequestRepository.findAllByFrom(user);
 
         return requests.stream().map(FriendRequest::getTo).map(userMapper::toNameUserDto).toList();
     }
 
+    @Transactional
     public List<NameUserResponse> getReceivedFriendRequests(long userId) throws UserNotFoundException {
         logger.info("Get received friend requests for {}", userId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = userService.findUserOrThrow(userId);
 
         var requests = friendRequestRepository.findAllByTo(user);
 
         return requests.stream().map(FriendRequest::getFrom).map(userMapper::toNameUserDto).toList();
     }
 
+    @Transactional
     public List<PotentialFriendResponse> getPotentialFriendsByNameLike(long userId, String name) throws UserNotFoundException {
         logger.info("Get potential friends by name for {} and name '{}'", userId, name);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+        User user = userService.findUserOrThrow(userId);
 
         logger.info("Search for user with name like: {}", name);
+
         var users = userRepository.findAllPotentialFriendsByNameStartingWith(user.getId(), name, PageRequest.of(0, COUNT_RESULTS_FOR_BY_NAME_REQUEST));
         return users.stream().map(potentialFriend -> toPotentialFriend(user, potentialFriend)).toList();
     }

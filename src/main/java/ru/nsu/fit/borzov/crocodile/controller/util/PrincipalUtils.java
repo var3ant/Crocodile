@@ -7,6 +7,7 @@ import ru.nsu.fit.borzov.crocodile.model.User;
 
 import java.security.Principal;
 
+//TODO: Использовать https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html
 @Component
 public class PrincipalUtils {
 

@@ -14,6 +14,7 @@ import ru.nsu.fit.borzov.crocodile.exception.IllegalNameException;
 import ru.nsu.fit.borzov.crocodile.exception.InvalidUserAuthDataException;
 import ru.nsu.fit.borzov.crocodile.exception.UserNotFoundException;
 import ru.nsu.fit.borzov.crocodile.mapper.UserMapper;
+import ru.nsu.fit.borzov.crocodile.model.Room;
 import ru.nsu.fit.borzov.crocodile.model.User;
 import ru.nsu.fit.borzov.crocodile.repository.UserRepository;
 
@@ -23,6 +24,7 @@ import java.nio.CharBuffer;
 @RequiredArgsConstructor
 public class UserService {
 
+    //TODO-N: Аннотация Slf4j
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserMapper userMapper;
     private final JwtTokenUtil jwtTokenUtil;
@@ -31,23 +33,17 @@ public class UserService {
     private final UserRepository userRepository;
     private static final String[] RESERVED_NAMES = new String[]{"Admin", "Info"};
 
+    public User findUserOrThrow(long userId) throws UserNotFoundException {
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    }
 
     public long register(RegisterRequest registerRequest) throws AlreadyExistException, IllegalNameException {
-        logger.warn("Trying to register with login {}", registerRequest.getLogin());
+        logger.info("Trying to register with login {}", registerRequest.getLogin());
 
-        var isExists = userRepository.existsByName(registerRequest.getLogin());
-
-        if (isExists) {
-            throw new AlreadyExistException();
-        }
-
-        if (StringUtils.equalsAnyIgnoreCase(registerRequest.getLogin(), RESERVED_NAMES)) {
-            throw new IllegalNameException();
-        }
+        validateLogin(registerRequest.getLogin());
 
         var password = passwordEncoder.encode(CharBuffer.wrap(registerRequest.getPassword()));
-
-        logger.warn("User {} registered", registerRequest.getLogin());
+        logger.info("User {} registered", registerRequest.getLogin());
         return userRepository.save(new User(registerRequest.getLogin(), password)).getId();
     }
 
@@ -55,17 +51,34 @@ public class UserService {
         User user = userRepository.findByName(loginRequest.getLogin())
                 .orElseThrow(InvalidUserAuthDataException::new);
 
-        if (passwordEncoder.matches(CharBuffer.wrap(loginRequest.getPassword()), user.getPassword())) {
-            var userDto = userMapper.toUserDto(user);
-            userDto.setToken(jwtTokenUtil.createToken(user.getName()));
-            logger.warn("User {} with id {} logged", loginRequest.getLogin(), userDto.getId());
-            return userDto;
+        if (!passwordEncoder.matches(CharBuffer.wrap(loginRequest.getPassword()), user.getPassword())) {
+            throw new InvalidUserAuthDataException();
         }
 
-        throw new InvalidUserAuthDataException();
+        var userDto = userMapper.toUserDto(user);
+        userDto.setToken(jwtTokenUtil.createToken(user.getName()));
+        logger.warn("User {} with id {} logged", loginRequest.getLogin(), userDto.getId());
+        return userDto;
     }
 
     public User findByName(String userName) throws UserNotFoundException {
         return userRepository.findByName(userName).orElseThrow(UserNotFoundException::new);
+    }
+
+    private void validateLogin(String login) throws IllegalNameException, AlreadyExistException {
+        var isExists = userRepository.existsByName(login);
+
+        if (isExists) {
+            throw new AlreadyExistException();
+        }
+
+        if (StringUtils.equalsAnyIgnoreCase(login, RESERVED_NAMES)) {
+            throw new IllegalNameException();
+        }
+    }
+
+    public void setRoom(User user, Room room) {
+        user.setRoom(room);
+        userRepository.save(user);
     }
 }

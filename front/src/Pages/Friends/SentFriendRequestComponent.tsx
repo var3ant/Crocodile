@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {Card} from "antd";
-import {HttpFriendApi} from "../../Classes/Http/HttpFriendApi";
 import {UserNameResponse} from "../../Classes/Http/Response/UserNameResponse";
 import CloseButton from "../../Classes/Http/Response/Button/CloseButton";
+import {HttpFriendRequestApi} from "../../Classes/Http/HttpFriendRequestApi";
 
 export default function SentFriendRequestComponent() {
     const [requests, setRequests] = useState<UserNameResponse[]>([])
@@ -12,7 +12,7 @@ export default function SentFriendRequestComponent() {
     }, [])
 
     async function update() {
-        let rows = await HttpFriendApi.getSentRequests();
+        let rows = await HttpFriendRequestApi.getSentRequests();
         setRequests(rows);
     }
 
@@ -33,7 +33,7 @@ export default function SentFriendRequestComponent() {
                                 <div>{following.name}</div>
                                 <CloseButton
                                         onClick={() => {
-                                            HttpFriendApi.cancelRequest(following.id).then(update)
+                                            HttpFriendRequestApi.cancelRequest(following.id).then(update)
                                         }}/>
                             </div>)
                     })}

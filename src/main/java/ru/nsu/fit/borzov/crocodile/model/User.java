@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +25,7 @@ public class User implements UserDetails {
     private String name;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="room_id")
     private Room room;
 
@@ -84,16 +85,19 @@ public class User implements UserDetails {
         return true;
     }
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "user_data__friends",
             joinColumns =@JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id"
-            ))
+            ))//TODO: тут можно в одну сторону только хранить дружбу, но тогда нужно будет каждым запросом искать один из двух вариантов (u1,u2) (u2,1)
     private Set<User> friends = new HashSet<>();
 
-    @OneToMany(mappedBy = "to")
+    @JsonIgnore
+    @OneToMany(mappedBy = "to", fetch = FetchType.LAZY)
     private Set<FriendRequest> incomingRequest = new HashSet<>();
 
-    @OneToMany(mappedBy = "from")
+    @JsonIgnore
+    @OneToMany(mappedBy = "from", fetch = FetchType.LAZY)
     private Set<FriendRequest> outcomingRequest = new HashSet<>();
 }

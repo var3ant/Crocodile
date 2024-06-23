@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {Card} from "antd";
-import {HttpFriendApi} from "../../Classes/Http/HttpFriendApi";
 import {UserNameResponse} from "../../Classes/Http/Response/UserNameResponse";
 import YesNoFriendRow from "./YesNoFriendRow";
+import {HttpFriendRequestApi} from "../../Classes/Http/HttpFriendRequestApi";
 
 export default function ReceivedFriendRequestComponent() {
     const [requests, setRequests] = useState<UserNameResponse[]>([])
@@ -12,7 +12,7 @@ export default function ReceivedFriendRequestComponent() {
     }, [])
 
     async function update() {
-        let rows = await HttpFriendApi.getReceivedRequests();
+        let rows = await HttpFriendRequestApi.getReceivedRequests();
         setRequests(rows);
     }
 
@@ -31,8 +31,8 @@ export default function ReceivedFriendRequestComponent() {
                     {requests.map((follower) => {
                         return (
                             <YesNoFriendRow key={follower.id} user={follower}
-                                            onYesClick={() => HttpFriendApi.sendRequest(follower.id).then(update)}
-                                            onNoClick={() => HttpFriendApi.declineRequest(follower.id).then(update)}
+                                            onYesClick={() => HttpFriendRequestApi.sendRequest(follower.id).then(update)}
+                                            onNoClick={() => HttpFriendRequestApi.declineRequest(follower.id).then(update)}
                             />);
                     })}
                 </Card>

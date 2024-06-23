@@ -1,11 +1,11 @@
 package ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.server;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.DrawRequest;
 import lombok.experimental.Delegate;
 
-import javax.validation.constraints.NotNull;
 
 @Getter
 public class DrawMessage extends ServerMessage {

@@ -13,7 +13,6 @@ export interface PaintingSettings {
 export class DrawCanvas extends React.Component<{
     canUserPaint: boolean,
     drawSubscriber: (startPoint: Point, finishPoint: Point, settings: PaintingSettings) => void,
-    clearSubscriber: () => void,
     paintingSettings: PaintingSettings
 }, {}> {
     private readonly _canvasRef: React.RefObject<any>;
@@ -29,11 +28,6 @@ export class DrawCanvas extends React.Component<{
     }
 
     public clear() {
-        this.internalClear();
-        this.props.clearSubscriber();
-    }
-
-    private internalClear() {
         this._ctx.strokeStyle = '#ffffff';
         this._ctx.clearRect(0, 0, this._canvasRef.current.width, this._canvasRef.current.height);
     }
@@ -101,7 +95,7 @@ export class DrawCanvas extends React.Component<{
 
     componentDidMount() {
         this._ctx = this._canvasRef.current.getContext('2d');
-        this.internalClear();
+        this.clear();
     }
 
     render() {

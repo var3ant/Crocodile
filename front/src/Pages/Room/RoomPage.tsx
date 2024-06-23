@@ -178,10 +178,9 @@ export function RoomPage() {
                                         canUserPaint={isDrawer && word !== null}
                                         drawSubscriber={(startPoint: Point, finishPoint: Point, settings: PaintingSettings) =>
                                             clientNewDraw(startPoint, finishPoint, settings)}
-                                        clearSubscriber={() => clientClear()}
                             />
                             <DrawMenu
-                                onClear={() => _canvas.current?.clear()}
+                                onClear={clientClear}
                                 onChangeSettings={(settings) => setPaintingSettings(settings)}
                             />
                         </div>

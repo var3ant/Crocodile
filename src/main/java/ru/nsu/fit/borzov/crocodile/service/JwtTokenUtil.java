@@ -60,9 +60,4 @@ public class JwtTokenUtil {
         return verifier.verify(token);
     }
 
-    public String getUsername(String token) {
-        DecodedJWT decoded = decodeToken(token);
-        return decoded.getSubject();
-    }
-
 }
