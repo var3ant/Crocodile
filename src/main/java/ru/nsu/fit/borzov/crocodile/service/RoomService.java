@@ -1,20 +1,15 @@
 package ru.nsu.fit.borzov.crocodile.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.buf.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.ChatRequest;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.client.DrawRequest;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.websocket.server.*;
 import ru.nsu.fit.borzov.crocodile.exception.*;
-import ru.nsu.fit.borzov.crocodile.model.GuessingPhrase;
 import ru.nsu.fit.borzov.crocodile.model.Room;
 import ru.nsu.fit.borzov.crocodile.model.User;
-import ru.nsu.fit.borzov.crocodile.repository.GuessingPhraseRepository;
 import ru.nsu.fit.borzov.crocodile.repository.RoomRepository;
 import ru.nsu.fit.borzov.crocodile.repository.UserRepository;
 
@@ -28,11 +23,14 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class RoomService {
     private final Logger logger = LoggerFactory.getLogger(RoomService.class);
+
+    private final MessageSenderService messageSenderService;
+    private final PhrasesService phrasesService;
+    private final ConcurrentRandomService random;
+
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
-    private final GuessingPhraseRepository guessingPhraseRepository;
-    private final MessageSenderService messageSenderService;
-    private final ConcurrentRandomService random;
+
 
 
     private static final int MIN_USERS_TO_START_GAME = 1;
@@ -191,32 +189,11 @@ public class RoomService {
         logger.info("New drawer {} of room {}", newDrawer.getId(), room.getId());
         room.setDrawer(newDrawer);
 
-        var words = generatePhraseToChoose(room);
+        var words = phrasesService.generatePhraseToChoose(room);
         room.setWordToChoose(words);
         roomRepository.save(room);
         messageSenderService.sendToRoom(new NewDrawerMessage(newDrawer.getId(), newDrawer.getName()), room);
         messageSenderService.sendToUser(new ChooseWordMessage(words), newDrawer);
-    }
-
-    private List<String> generatePhraseToChoose(Room room) {
-        var count = guessingPhraseRepository.count();
-
-        var phrases = new ArrayList<String>();
-
-        for (int i = 0; i < 3; i++) {
-            var idx = random.nextInt((int) count);
-            Page<GuessingPhrase> phrasePage = guessingPhraseRepository.findAll(PageRequest.of(idx, 1));
-            var phraseOpt = phrasePage.stream().findFirst();
-            if (phraseOpt.isPresent()) {
-                phrases.add(phraseOpt.get().getPhrase());
-            } else {
-                logger.error("Phrases cannot be received");
-                throw new InternalServerErrorException();
-            }
-        }
-
-        logger.info("Phrases for room {}:{}", room.getId(), StringUtils.join(phrases, ','));
-        return phrases;
     }
 
     public Room getById(long id) throws RoomNotFoundException {

@@ -22,13 +22,15 @@ import java.nio.CharBuffer;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
-    private final Logger logger = LoggerFactory.getLogger(UserService.class);
-    private final String[] reservedNames = new String[]{"Admin", "Info"};
 
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private final UserMapper userMapper;
     private final JwtTokenUtil jwtTokenUtil;
+    private final PasswordEncoder passwordEncoder;
+
+    private final UserRepository userRepository;
+    private static final String[] RESERVED_NAMES = new String[]{"Admin", "Info"};
+
 
     public long register(RegisterRequest registerRequest) throws AlreadyExistException, IllegalNameException {
         logger.warn("Trying to register with login {}", registerRequest.getLogin());
@@ -39,7 +41,7 @@ public class UserService {
             throw new AlreadyExistException();
         }
 
-        if (StringUtils.equalsAnyIgnoreCase(registerRequest.getLogin(), reservedNames)) {
+        if (StringUtils.equalsAnyIgnoreCase(registerRequest.getLogin(), RESERVED_NAMES)) {
             throw new IllegalNameException();
         }
 

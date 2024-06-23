@@ -22,10 +22,11 @@ import java.util.List;
 @RequestMapping("/friends")
 @RequiredArgsConstructor
 public class FriendsController {
-    private final FriendService friendService;
+    private final Logger logger = LoggerFactory.getLogger(FriendsController.class);
     private final UserMapper userMapper;
     private final PrincipalUtils principalUtils;
-    private final Logger logger = LoggerFactory.getLogger(FriendsController.class);
+
+    private final FriendService friendService;
 
     @GetMapping("/sent_requests")
     public List<NameUserResponse> getSentRequests(Principal principal) throws UserNotFoundException, AuthenticationException {

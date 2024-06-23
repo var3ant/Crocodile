@@ -18,10 +18,10 @@ import java.security.Principal;
 @Controller
 @RequiredArgsConstructor
 public class WebSocketController {
-    private final RoomService roomService;
+    private final Logger logger = LoggerFactory.getLogger(WebSocketController.class);
     private final PrincipalUtils principalUtils;
 
-    private final Logger logger = LoggerFactory.getLogger(WebSocketController.class);
+    private final RoomService roomService;
 
     @MessageMapping("/chat")
     public void chat(ChatRequest message, Principal principal) throws UserNotFoundException, WrongGameRoleException, UserNotInRoomException, AuthenticationException {
@@ -66,8 +66,8 @@ public class WebSocketController {
 
     @MessageMapping("/clear/")
     public void joinRoom(Principal principal) throws UserNotFoundException, UserNotInRoomException, AuthenticationException {
-            var userId = principalUtils.getUserId(principal);
-            roomService.clearCanvas(userId);
+        var userId = principalUtils.getUserId(principal);
+        roomService.clearCanvas(userId);
     }
 
     @MessageMapping("/disconnect")

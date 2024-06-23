@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import ColorButton from "./ColorButton";
 import {ColorPicker, Slider} from "antd";
 import {PaintingSettings} from "./DrawCanvas";
-import binImage from '../../../Assets/bin.png';
 import "../../Style/Drawer.css"
 
 export type onChangePaintingSettingsFunc = (paintingSettings: PaintingSettings) => void;
@@ -43,7 +42,7 @@ export function DrawMenu(props: Readonly<{ onChangeSettings: onChangePaintingSet
                 </div>
                 <div className="horizontal">
                     {CreateButtonsRow(colorsRow2)}
-                    <img className='boxButton' src={binImage} onClick={() => props.onClear()}/>
+                    <img className='boxButton' src='/Assets/bin.png' onClick={() => props.onClear()}/>
                 </div>
             </div>
             <div style={{width: '200px'}}>

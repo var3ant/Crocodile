@@ -22,10 +22,11 @@ import static org.slf4j.LoggerFactory.getLogger;
 @Service
 @RequiredArgsConstructor
 public class FriendService {
+    private final Logger logger = getLogger(FriendService.class);
+    private final UserMapper userMapper;
+
     private final UserRepository userRepository;
     private final FriendRequestRepository friendRequestRepository;
-    private final UserMapper userMapper;
-    private final Logger logger = getLogger(FriendService.class);
 
     private static final int COUNT_RESULTS_FOR_BY_NAME_REQUEST = 10;
 

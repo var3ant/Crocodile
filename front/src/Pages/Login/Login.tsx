@@ -13,7 +13,7 @@ export function Login(props: Readonly<{ onClick: onClickFunc, buttonText: string
             <div className='vertical' style={{gap: '10px'}}>
                 <Input addonBefore='Name' placeholder="Enter name" value={login}
                        onChange={text => setLogin(text.target.value)}/>
-                <Input addonBefore='Password' placeholder="Enter password" value={password}
+                <Input.Password addonBefore='Password' placeholder="Enter password" value={password}
                        onChange={text => setPassword(text.target.value)}/>
                 <Button style={{marginLeft: 'auto'}} type="primary" onClick={() => {
                     props.onClick(login, password)
