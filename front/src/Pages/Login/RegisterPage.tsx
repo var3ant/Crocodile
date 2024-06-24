@@ -3,7 +3,7 @@ import {Button, Space} from "antd";
 import {Login} from "./Login";
 import {HttpAuthApi} from "../../Classes/Http/Api/HttpAuthApi";
 import {useNavigate} from "react-router-dom";
-import {Errors, errorToString} from "../../Classes/ErrorMessages";
+import {Errors, errorToString} from "../../Classes/Errors/ErrorMessages";
 import {PagesEnum} from "../PagesEnum";
 
 function RegisterPage() {
@@ -26,6 +26,8 @@ function RegisterPage() {
             setErrorMessage("This login is prohibited")
         } else if (errorType === errorToString(Errors.ALREADY_EXIST_MESSAGE)) {
             setErrorMessage("This login is already taken")
+        } else if (errorType === errorToString(Errors.BAD_PASSWORD_MESSAGE)) {
+            setErrorMessage("Password field is empty")
         } else {
             setErrorMessage("Unknown error")
         }

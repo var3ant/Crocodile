@@ -8,6 +8,7 @@ import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.LoginResponse;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.LoginRequest;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.RegisterRequest;
 import ru.nsu.fit.borzov.crocodile.exception.AlreadyExistException;
+import ru.nsu.fit.borzov.crocodile.exception.BadPasswordException;
 import ru.nsu.fit.borzov.crocodile.exception.IllegalNameException;
 import ru.nsu.fit.borzov.crocodile.exception.InvalidUserAuthDataException;
 import ru.nsu.fit.borzov.crocodile.service.UserService;
@@ -22,7 +23,7 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public long register(@Valid @RequestBody RegisterRequest registerRequest) throws AlreadyExistException, IllegalNameException {
+    public long register(@Valid @RequestBody RegisterRequest registerRequest) throws AlreadyExistException, IllegalNameException, BadPasswordException {
         return userService.register(registerRequest);
     }
 

@@ -5,5 +5,5 @@ import React from "react";
 
 export default function CheckButton(props: Readonly<{ onClick: () => void }>) {
     return (<Button icon={<CheckOutlined style={{color: green[5]}}/>}
-                    onClick={() => props.onClick()}/>)
+                    onClick={props.onClick}/>)
 }

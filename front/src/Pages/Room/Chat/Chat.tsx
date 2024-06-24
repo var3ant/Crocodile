@@ -21,7 +21,7 @@ class Chat extends React.Component<ChatProps, {}> {
         return (
             <Space direction="vertical">
                 <ChatArea Messages={this.props.messages} isDrawer={this.props.isDrawer}/>
-                <SendMessageLine canType={!this.props.isDrawer} onClick={text => this.props.sendNewMessage(text)}/>
+                <SendMessageLine canType={!this.props.isDrawer} trySend={text => this.props.sendNewMessage(text)}/>
             </Space>
         );
     }

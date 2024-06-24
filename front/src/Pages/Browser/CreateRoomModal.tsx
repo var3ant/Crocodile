@@ -3,7 +3,7 @@ import {Input, Modal} from "antd";
 import {HttpRoomApi} from "../../Classes/Http/Api/HttpRoomApi";
 import {StateManager} from "../../Classes/StateManager";
 import {useNavigate} from "react-router-dom";
-import {Errors, errorToString} from "../../Classes/ErrorMessages";
+import {Errors, errorToString} from "../../Classes/Errors/ErrorMessages";
 import {PagesEnum} from "../PagesEnum";
 
 export default function CreateRoomModal(props: Readonly<{

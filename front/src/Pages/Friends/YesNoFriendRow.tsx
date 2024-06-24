@@ -13,10 +13,10 @@ export default function YesNoFriendRow(props: Readonly<{
         <div className='horizontal' key={props.user.id}>
             <div style={{alignSelf: 'center', margin: '0 5px 0 0'}}>{props.user.name}</div>
                 <div style={{margin: ' 0 4px 0 0'}}>
-                    <CheckButton onClick={() => props.onYesClick()}/>
+                    <CheckButton onClick={props.onYesClick}/>
                 </div>
                 <div style={{margin: '0 4px 0 0'}}>
-                    <CloseButton onClick={() => props.onNoClick()}/>
+                    <CloseButton onClick={props.onNoClick}/>
                 </div>
         </div>)
 }

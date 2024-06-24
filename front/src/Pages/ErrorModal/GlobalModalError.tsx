@@ -47,7 +47,7 @@ export default function GlobalModalError() {
                onOk={onOk}
                closable={false}
                maskClosable={false}
-               footer={[<Button key='ok' onClick={() => onOk()}>OK</Button>]}
+               footer={[<Button key='ok' onClick={onOk}>OK</Button>]}
                width='400px'>
             <div className='vertical' style={{textAlign: 'center', margin: '10px 0px'}}>
                 <b style={{fontSize: '16px'}}>{errorEvent.message}</b>

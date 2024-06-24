@@ -8,7 +8,10 @@ export enum Errors {
     ROOM_NOT_FOUND_MESSAGE,
     USER_NOT_FOUND_MESSAGE,
     USER_NOT_IN_ROOM_MESSAGE,
-    WRONG_GAME_ROLE_EXCEPTION
+    WRONG_GAME_ROLE_EXCEPTION,
+    ILLEGAL_USER_MESSAGE,
+    BAD_PASSWORD_MESSAGE
+
 }
 
 export function errorToString(enumValue: Errors): string {

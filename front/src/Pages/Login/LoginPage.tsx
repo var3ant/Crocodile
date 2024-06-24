@@ -3,7 +3,7 @@ import {Button, Space} from "antd";
 import {Login} from "./Login";
 import {StateManager} from "../../Classes/StateManager";
 import {useNavigate} from "react-router-dom";
-import {Errors, errorToString} from "../../Classes/ErrorMessages";
+import {Errors, errorToString} from "../../Classes/Errors/ErrorMessages";
 import {PagesEnum} from "../PagesEnum";
 import {HttpAuthApi} from "../../Classes/Http/Api/HttpAuthApi";
 

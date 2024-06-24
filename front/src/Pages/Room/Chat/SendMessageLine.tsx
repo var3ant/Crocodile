@@ -2,25 +2,34 @@
 import {Space, Button, Input} from 'antd';
 
 
-class SendMessageLine extends React.Component<{ canType: boolean, onClick: (text: string) => boolean }, { text: string }> {
-    constructor(props: { canType: boolean, onClick: (text: string) => boolean }) {
+class SendMessageLine extends React.Component<{ canType: boolean, trySend: (text: string) => boolean }, {
+    text: string
+}> {
+    constructor(props: { canType: boolean, trySend: (text: string) => boolean }) {
         super(props);
         this.state = {text: ""};
     }
 
+    private onKeyUp = (e: any) => {
+        if (e.key === 'Enter') {
+            this.send();
+        }
+    }
+
+    private send() {
+        if (this.props.trySend(this.state.text)) {
+            this.setState({text: ""})
+        }
+    }
+
     render() {
         return (
-            <Space.Compact style={{width: '100%'}}>
+            <Space.Compact style={{width: '100%'}} onKeyUp={this.onKeyUp}>
                 <Input
                     disabled={!this.props.canType}
                     placeholder="guess word" value={this.state.text}
                     onChange={text => this.setState({text: text.target.value})}/>
-                <Button type="primary" onClick={() => {
-                    let isSuccess = this.props.onClick(this.state.text)
-                    if (isSuccess) {
-                        this.setState({text: ""})
-                    }
-                }}>Send</Button>
+                <Button type="primary" onClick={this.send}>Send</Button>
             </Space.Compact>
         );
     }

@@ -42,7 +42,7 @@ export function DrawMenu(props: Readonly<{ onChangeSettings: onChangePaintingSet
                 </div>
                 <div className="horizontal">
                     {CreateButtonsRow(colorsRow2)}
-                    <img className='boxButton' src='/Assets/bin.png' onClick={() => props.onClear()}/>
+                    <img className='boxButton' src='/Assets/bin.png' onClick={props.onClear}/>
                 </div>
             </div>
             <div style={{width: '200px'}}>

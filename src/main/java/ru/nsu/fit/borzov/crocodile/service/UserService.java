@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.response.LoginResponse;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.LoginRequest;
 import ru.nsu.fit.borzov.crocodile.dto.message.room.http.request.user.RegisterRequest;
-import ru.nsu.fit.borzov.crocodile.exception.AlreadyExistException;
-import ru.nsu.fit.borzov.crocodile.exception.IllegalNameException;
-import ru.nsu.fit.borzov.crocodile.exception.InvalidUserAuthDataException;
-import ru.nsu.fit.borzov.crocodile.exception.UserNotFoundException;
+import ru.nsu.fit.borzov.crocodile.exception.*;
 import ru.nsu.fit.borzov.crocodile.mapper.UserMapper;
 import ru.nsu.fit.borzov.crocodile.model.Room;
 import ru.nsu.fit.borzov.crocodile.model.User;
@@ -37,10 +34,11 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
-    public long register(RegisterRequest registerRequest) throws AlreadyExistException, IllegalNameException {
+    public long register(RegisterRequest registerRequest) throws AlreadyExistException, IllegalNameException, BadPasswordException {
         logger.info("Trying to register with login {}", registerRequest.getLogin());
 
-        validateLogin(registerRequest.getLogin());
+        validateNewLogin(registerRequest.getLogin());
+        validateNewPassword(registerRequest.getPassword());
 
         var password = passwordEncoder.encode(CharBuffer.wrap(registerRequest.getPassword()));
         logger.info("User {} registered", registerRequest.getLogin());
@@ -65,15 +63,20 @@ public class UserService {
         return userRepository.findByName(userName).orElseThrow(UserNotFoundException::new);
     }
 
-    private void validateLogin(String login) throws IllegalNameException, AlreadyExistException {
+    private void validateNewLogin(String login) throws IllegalNameException, AlreadyExistException {
         var isExists = userRepository.existsByName(login);
 
         if (isExists) {
             throw new AlreadyExistException();
         }
 
-        if (StringUtils.equalsAnyIgnoreCase(login, RESERVED_NAMES)) {
+        if (StringUtils.equalsAnyIgnoreCase(login, RESERVED_NAMES) || login.isBlank())
             throw new IllegalNameException();
+    }
+
+    private void validateNewPassword(String password) throws BadPasswordException {
+        if (password.isEmpty()) {
+            throw new BadPasswordException();
         }
     }
 
