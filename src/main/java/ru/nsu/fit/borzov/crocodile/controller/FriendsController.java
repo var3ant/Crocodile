@@ -19,7 +19,6 @@ import java.util.Collection;
 @RequestMapping("/friends")
 @RequiredArgsConstructor
 public class FriendsController {
-    private final UserMapper userMapper;
     private final PrincipalUtils principalUtils;
 
     private final FriendService friendService;

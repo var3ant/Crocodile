@@ -15,4 +15,11 @@ public class GuessingPhrase {
     private long id;
 
     private String phrase;
+
+    public GuessingPhrase() {
+    }
+
+    public GuessingPhrase(String phrase) {
+        this.phrase = phrase;
+    }
 }

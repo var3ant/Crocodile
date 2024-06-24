@@ -7,6 +7,6 @@ import lombok.Data;
 public class FriendResponse {
     private long id;
     private @NotNull String name;
-    private long roomId;
+    private Long roomId;
     private @NotNull String roomName;
 }

@@ -23,13 +23,15 @@ class SendMessageLine extends React.Component<{ canType: boolean, trySend: (text
     }
 
     render() {
+        const preventDefault = (e: any) => e.preventDefault();
+
         return (
             <Space.Compact style={{width: '100%'}} onKeyUp={this.onKeyUp}>
                 <Input
                     disabled={!this.props.canType}
                     placeholder="guess word" value={this.state.text}
                     onChange={text => this.setState({text: text.target.value})}/>
-                <Button type="primary" onClick={this.send}>Send</Button>
+                <Button type="primary" onKeyDown={preventDefault} onClick={() => this.send()}>Send</Button>
             </Space.Compact>
         );
     }

@@ -2,27 +2,29 @@ package ru.nsu.fit.borzov.crocodile.config;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 import ru.nsu.fit.borzov.crocodile.model.GuessingPhrase;
 import ru.nsu.fit.borzov.crocodile.repository.GuessingPhraseRepository;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.util.List;
+import java.io.InputStreamReader;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
 @RequiredArgsConstructor
 public class AfterStartupActions {
-    private final GuessingPhraseRepository guessingPhraseRepository;
-    private static final String PHRASES_FILENAME = "classpath:phrases_ru.txt";
-
     private final Logger logger = getLogger(AfterStartupActions.class);
+
+    private final GuessingPhraseRepository guessingPhraseRepository;
+
+    @Value("classpath:phrases_ru.txt")
+    private Resource phrasesResource;
 
     //TODO: это нужно например через flyway написать, но пока так
     @EventListener(ApplicationReadyEvent.class)
@@ -33,14 +35,10 @@ public class AfterStartupActions {
 
         try {
             logger.info("Start loading phrases into the Database");
-            var file = ResourceUtils.getFile(PHRASES_FILENAME);
-            List<String> phrases = Files.readAllLines(file.toPath(), Charset.defaultCharset());
-            for (String phrase : phrases) {
-                var phraseModel = new GuessingPhrase();
-                phraseModel.setPhrase(phrase);
 
-                guessingPhraseRepository.save(phraseModel);
-            }
+            var phrasesReader = new BufferedReader(new InputStreamReader(phrasesResource.getInputStream()));
+            phrasesReader.lines().forEach((phrase) -> guessingPhraseRepository.save(new GuessingPhrase(phrase)));
+
             logger.info("Phrases were successfully loaded into the Database");
 
         } catch (IOException e) {
