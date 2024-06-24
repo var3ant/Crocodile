@@ -1,8 +1,8 @@
 version: '3.9'
 
 services:
-  postgres_db:
-    container_name: "postgres_db_full_deploy"
+  postgres_db_deploy:
+    container_name: postgres_db_deploy
     image: postgres
     restart: always
     environment:
@@ -28,17 +28,17 @@ services:
       dockerfile: Dockerfile
     environment:
       SPRING_PORT: ${SPRING_PORT}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_DB: ${DB_DBNAME}
-      PG_PORT: ${DB_PORT}
-      PG_HOSTNAME: "postgres_db_full_deploy"
-      PING_TEXT: "From Docker"
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_DBNAME: ${DB_DBNAME}
+      DB_PORT: ${DB_PORT}
+      DB_HOSTNAME: "postgres_db_deploy"
+      PING_MESSAGE: "From Docker"
     ports:
       - ${SPRING_PORT}:${SPRING_PORT}
     #    command: [ "java", "-jar"]
     depends_on:
-      postgres_db:
+      postgres_db_deploy:
         condition: service_healthy
   front:
     restart: always
@@ -53,5 +53,5 @@ services:
     ports:
       - ${REACT_PORT}:${REACT_PORT}
     depends_on:
-      postgres_db:
+      postgres_db_deploy:
         condition: service_healthy
