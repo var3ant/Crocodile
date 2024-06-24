@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Input, Modal} from "antd";
-import {HttpRoomApi} from "../../Classes/Http/HttpRoomApi";
+import {HttpRoomApi} from "../../Classes/Http/Api/HttpRoomApi";
 import {StateManager} from "../../Classes/StateManager";
 import {useNavigate} from "react-router-dom";
 import {Errors, errorToString} from "../../Classes/ErrorMessages";

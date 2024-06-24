@@ -5,21 +5,30 @@ import {createEvent, createStore} from "effector";
 import {useUnit} from "effector-react";
 import {PagesEnum} from "../PagesEnum";
 
-export const globalErrorEvent = createEvent<GlobalError>();
-
-const globalError = createStore<GlobalError>({message: "Unexpected error", redirectPath: PagesEnum.LOGIN});
-
-export interface GlobalError {
-    message: string,
-    redirectPath: PagesEnum | null
+export class GlobalError {
+    public readonly message;
+    public readonly redirectPath;
+    public readonly redirectBeforeMessage;
+    constructor(message: string, redirectPath: PagesEnum | null = null, redirectBeforeMessage: boolean | null = null) {
+        this.message = message;
+        this.redirectPath = redirectPath;
+        this.redirectBeforeMessage = redirectBeforeMessage;
+    }
 }
 
+
+export const globalErrorEvent = createEvent<GlobalError>();
+
+const globalError = createStore<GlobalError>(new GlobalError("Unexpected error", PagesEnum.LOGIN));
 export default function GlobalModalError() {
     const [isOpen, setOpen] = useState<boolean>(false)
     const navigate = useNavigate()
 
     const [errorEvent, _] = useUnit([globalError, globalErrorEvent]);
     globalError.on(globalErrorEvent, (oldState, newState) => {
+        if(errorEvent.redirectBeforeMessage && errorEvent.redirectPath != null) {
+            navigate(errorEvent.redirectPath);
+        }
         setOpen(true)
         return newState;
     });
@@ -27,7 +36,7 @@ export default function GlobalModalError() {
 
     const onOk = () => {
         setOpen(false)
-        if(errorEvent.redirectPath != null) {
+        if(errorEvent.redirectBeforeMessage != true && errorEvent.redirectPath != null) {
             navigate(errorEvent.redirectPath);
         }
     }

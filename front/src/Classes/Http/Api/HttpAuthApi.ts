@@ -1,5 +1,5 @@
-import {StateManager} from "../StateManager";
-import {AxiosService} from "./AxiosService";
+import {StateManager} from "../../StateManager";
+import {AxiosService} from "../AxiosService";
 
 export class HttpAuthApi {
     public static async login(name: string, password: string): Promise<number> {

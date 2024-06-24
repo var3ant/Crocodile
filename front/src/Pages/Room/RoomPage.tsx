@@ -19,7 +19,7 @@ import {ReactionEvent} from "../../Classes/Events/ReactionEvent";
 import ClearEvent from "../../Classes/Events/ClearEvent";
 import ConnectionErrorEvent from "../../Classes/Events/Errors/ConnectionErrorEvent";
 import {PagesEnum} from "../PagesEnum";
-import {globalErrorEvent} from "../ErrorModal/GlobalModalError";
+import {GlobalError, globalErrorEvent} from "../ErrorModal/GlobalModalError";
 
 export function RoomPage() {
     const _canvas: React.RefObject<DrawCanvas> = React.createRef();
@@ -52,11 +52,16 @@ export function RoomPage() {
         }
 
         if (room == null && !StateManager.trySetRoom(roomId)) {
-            globalErrorEvent({redirectPath: PagesEnum.ROOM_LIST, message: 'Room not found'})
+            globalErrorEvent(new GlobalError('Room not found', PagesEnum.ROOM_LIST));
         }
+
+        StateManager.getRoom()?.subscribeEvents((event => {
+            eventHandler(event)
+        }));
     });
 
     const eventHandler = (event: ServerEvent) => {
+        console.log("event handled")
         if (event instanceof UserMessageEvent) {
 
             setMessages([...messages, event.toMessageData()]);
@@ -108,14 +113,10 @@ export function RoomPage() {
 
         } else if (event instanceof ConnectionErrorEvent) {
 
-            globalErrorEvent({redirectPath: PagesEnum.ROOM_LIST, message: 'Room not found'})
+            globalErrorEvent(new GlobalError('Room not found', PagesEnum.ROOM_LIST))
 
         }
     }
-
-    StateManager.getRoom()?.subscribeEvents((event => {
-        eventHandler(event)
-    }));
 
     const chooseWord = (index: number, word: string) => {
         setWordsToChoose([])

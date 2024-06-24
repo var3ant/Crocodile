@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Button, Space} from "antd";
 import {Login} from "./Login";
-import {HttpAuthApi} from "../../Classes/Http/HttpAuthApi";
+import {HttpAuthApi} from "../../Classes/Http/Api/HttpAuthApi";
 import {useNavigate} from "react-router-dom";
 import {Errors, errorToString} from "../../Classes/ErrorMessages";
 import {PagesEnum} from "../PagesEnum";

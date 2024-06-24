@@ -14,10 +14,11 @@ import {ReceiveImageEvent} from "./Events/ReceiveImageEvent";
 import ClearEvent from "./Events/ClearEvent";
 import {ReactionEvent} from "./Events/ReactionEvent";
 import ConnectionErrorEvent from "./Events/Errors/ConnectionErrorEvent";
-import {globalErrorEvent} from "../Pages/ErrorModal/GlobalModalError";
+import {GlobalError, globalErrorEvent} from "../Pages/ErrorModal/GlobalModalError";
 import {PagesEnum} from "../Pages/PagesEnum";
 import {StateManager} from "./StateManager";
 import {BACKEND_URL} from "./Http/Constants";
+import {showNotAuthorizedMessage} from "./Errors/checkForAuthError";
 
 class RoomConnection {
     private readonly _userId: number;
@@ -103,10 +104,7 @@ class RoomConnection {
     public connect(): boolean {
         if (this._client !== null) {
             console.error("Attempting to connect when it has already been completed")
-            globalErrorEvent({
-                message: "Attempting to connect when it has already been completed",
-                redirectPath: PagesEnum.ROOM_LIST
-            })
+            globalErrorEvent(new GlobalError("Attempting to connect when it has already been completed", PagesEnum.ROOM_LIST))
         }
 
         // this._cookies.set("userId", this._userId, {path: '/'})
@@ -118,13 +116,13 @@ class RoomConnection {
         return this._client.connect({Authorization: `Bearer ${AxiosService.getAuthToken()}`}, () => {
             this.joinRoom()
             return true;
-        }, (e: any) => false);
+        }, (e: any) => showNotAuthorizedMessage());
     }
 
     private subscribe(topic: string, onMessageReceived: ((message: Stomp.Message) => any)) {
         if (this._client === null) {
             StateManager.trySetRoom(null);
-            globalErrorEvent({message: 'connection lost', redirectPath: PagesEnum.ROOM_LIST})
+            globalErrorEvent(new GlobalError('Connection lost', PagesEnum.ROOM_LIST))
             return;
         }
 
@@ -133,7 +131,7 @@ class RoomConnection {
 
     public sendMessage(topic: string, message: any) {
         if (this._client === null) {
-            globalErrorEvent({message: 'connection lost', redirectPath: PagesEnum.ROOM_LIST})
+            globalErrorEvent(new GlobalError('Connection lost', PagesEnum.ROOM_LIST))
             return;
         }
         this._client.send('/app' + topic, {}, JSON.stringify(message));

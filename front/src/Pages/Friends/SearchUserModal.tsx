@@ -5,8 +5,8 @@ import CloseButton from "../../Classes/Http/Response/Button/CloseButton";
 import CheckButton from "../../Classes/Http/Response/Button/CheckButton";
 import {green} from "@ant-design/colors";
 import {UserOutlined} from "@ant-design/icons";
-import {HttpFriendRequestApi} from "../../Classes/Http/HttpFriendRequestApi";
-import {HttpFriendApi} from "../../Classes/Http/HttpFriendApi";
+import {HttpFriendRequestApi} from "../../Classes/Http/Api/HttpFriendRequestApi";
+import {HttpFriendApi} from "../../Classes/Http/Api/HttpFriendApi";
 
 const {Search} = Input;
 

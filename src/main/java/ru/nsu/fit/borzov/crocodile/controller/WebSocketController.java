@@ -80,9 +80,16 @@ public class WebSocketController {
     }
 
     @EventListener
-    private void handleSessionDisconnect(SessionDisconnectEvent event) throws AuthenticationException {
+    private void handleSessionDisconnect(SessionDisconnectEvent event) {
         var user = event.getUser();
-        var userId = principalUtils.getUserId(user);
+        long userId;
+
+        try {
+            userId = principalUtils.getUserId(user);
+        } catch (AuthenticationException e) {
+            logger.info("User is not logged in, but trying to disconnect");
+            return;
+        }
 
         try {
             roomService.disconnect(userId);

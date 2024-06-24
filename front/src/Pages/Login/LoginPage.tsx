@@ -5,7 +5,7 @@ import {StateManager} from "../../Classes/StateManager";
 import {useNavigate} from "react-router-dom";
 import {Errors, errorToString} from "../../Classes/ErrorMessages";
 import {PagesEnum} from "../PagesEnum";
-import {HttpAuthApi} from "../../Classes/Http/HttpAuthApi";
+import {HttpAuthApi} from "../../Classes/Http/Api/HttpAuthApi";
 
 function LoginPage() {
     const [errorMessage, setErrorMessage] = useState("");

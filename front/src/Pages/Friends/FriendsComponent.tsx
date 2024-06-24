@@ -2,10 +2,10 @@ import {useNavigate} from "react-router-dom";
 import {Flex, Table, TableProps} from "antd";
 import React, {useEffect, useState} from "react";
 import {StateManager} from "../../Classes/StateManager";
-import {HttpFriendApi} from "../../Classes/Http/HttpFriendApi";
+import {HttpFriendApi} from "../../Classes/Http/Api/HttpFriendApi";
 import FriendView from "../../Classes/Http/Response/FriendView";
 import {PagesEnum} from "../PagesEnum";
-import {globalErrorEvent} from "../ErrorModal/GlobalModalError";
+import {GlobalError, globalErrorEvent} from "../ErrorModal/GlobalModalError";
 
 export function FriendsComponent() {
     const navigate = useNavigate();
@@ -61,7 +61,7 @@ export function FriendsComponent() {
                                        }
                                        console.log(friendView.roomName);
                                        if (!StateManager.trySetRoom(roomId)) {
-                                           globalErrorEvent({redirectPath: null, message: 'Room not found'})
+                                           globalErrorEvent(new GlobalError( 'Room not found'))
                                        } else {
                                            navigate(PagesEnum.ROOM + roomId);
                                        }

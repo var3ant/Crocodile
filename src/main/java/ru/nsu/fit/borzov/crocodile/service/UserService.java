@@ -57,7 +57,7 @@ public class UserService {
 
         var userDto = userMapper.toUserDto(user);
         userDto.setToken(jwtTokenUtil.createToken(user.getName()));
-        logger.warn("User {} with id {} logged", loginRequest.getLogin(), userDto.getId());
+        logger.warn("User {} with id {} logged in", loginRequest.getLogin(), userDto.getId());
         return userDto;
     }
 

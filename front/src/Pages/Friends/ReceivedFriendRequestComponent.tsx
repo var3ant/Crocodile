@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Card} from "antd";
 import {UserNameResponse} from "../../Classes/Http/Response/UserNameResponse";
 import YesNoFriendRow from "./YesNoFriendRow";
-import {HttpFriendRequestApi} from "../../Classes/Http/HttpFriendRequestApi";
+import {HttpFriendRequestApi} from "../../Classes/Http/Api/HttpFriendRequestApi";
 
 export default function ReceivedFriendRequestComponent() {
     const [requests, setRequests] = useState<UserNameResponse[]>([])
